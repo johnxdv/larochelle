@@ -1,0 +1,497 @@
+@import "tailwindcss";
+
+/* ───────────────────────────────────────────────────────────
+   Ashley Immobilier — système de design
+   Palette : calcaire rochelais, sable, bleu atlantique profond
+
+   Les classes maison vivent dans une couche CSS antérieure aux
+   utilitaires Tailwind, qui peuvent ainsi toujours les surcharger.
+   ─────────────────────────────────────────────────────────── */
+
+@theme inline {
+  /* Surfaces claires */
+  --color-calcaire: #fbf9f5;
+  --color-calcaire-2: #f5f1e9;
+  --color-calcaire-3: #ede7db;
+
+  /* Sable */
+  --color-sable: #e4d8c3;
+  --color-sable-2: #d3c2a5;
+  --color-sable-3: #b9a383;
+
+  /* Bleu atlantique */
+  --color-atlantique: #0c2e42;
+  --color-atlantique-2: #123c55;
+  --color-atlantique-3: #1b5675;
+
+  /* Azur / écume */
+  --color-azur: #2d7f9d;
+  --color-azur-2: #4ea0bc;
+  --color-ecume: #dbe9ec;
+  --color-ecume-2: #eef5f6;
+
+  /* Encre (textes) */
+  --color-encre: #0f2531;
+  --color-encre-2: #3b525f;
+  --color-encre-3: #6d8290;
+
+  /* Typographies auto-hébergées */
+  --font-display: var(--font-cormorant), ui-serif, Georgia, serif;
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+
+  /* Rayons — arrondis partout */
+  --radius-xs: 0.5rem;
+  --radius-sm: 0.75rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.5rem;
+  --radius-xl: 2rem;
+  --radius-2xl: 2.5rem;
+  --radius-3xl: 3rem;
+
+  /* Courbes d'animation */
+  --ease-douce: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-marine: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+@layer base {
+  :root {
+    --ombre-douce: 0 1px 2px rgba(12, 46, 66, 0.04),
+      0 8px 24px -12px rgba(12, 46, 66, 0.12);
+    --ombre-levee: 0 2px 4px rgba(12, 46, 66, 0.05),
+      0 24px 56px -24px rgba(12, 46, 66, 0.26);
+    --ombre-verre: 0 1px 0 rgba(255, 255, 255, 0.6) inset,
+      0 -1px 0 rgba(255, 255, 255, 0.18) inset,
+      0 16px 40px -20px rgba(12, 46, 66, 0.28);
+    --filet: rgba(12, 46, 66, 0.1);
+    --filet-clair: rgba(255, 255, 255, 0.5);
+  }
+
+  * {
+    border-color: var(--filet);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-calcaire);
+    color: var(--color-encre);
+    font-family: var(--font-sans);
+    font-feature-settings: "kern", "liga", "calt";
+    letter-spacing: -0.005em;
+    overflow-x: hidden;
+  }
+
+  /* Halos de lumière douce posés sur le fond de page */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(60rem 40rem at 12% -8%, rgba(78, 160, 188, 0.14), transparent 70%),
+      radial-gradient(48rem 36rem at 92% 6%, rgba(228, 216, 195, 0.5), transparent 68%),
+      radial-gradient(52rem 42rem at 50% 108%, rgba(45, 127, 157, 0.1), transparent 70%);
+  }
+
+  ::selection {
+    background: var(--color-atlantique);
+    color: var(--color-calcaire);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-azur);
+    outline-offset: 3px;
+    border-radius: var(--radius-xs);
+  }
+}
+
+@layer base {
+  /* Classes maison.
+     Elles sont déclarées dans @layer base — et non components — parce que
+     la chaîne de build aplatit la couche components : les règles en
+     sortiraient hors couche et prendraient alors le pas sur les utilitaires
+     Tailwind, qui doivent pouvoir les surcharger ponctuellement.
+     ─── Typographie ───────────────────────────────────────── */
+
+  .titre {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 1.04;
+    text-wrap: balance;
+  }
+
+  .surtitre {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-azur);
+  }
+
+  .plume {
+    text-wrap: pretty;
+    line-height: 1.75;
+    color: var(--color-encre-2);
+  }
+
+  .chiffre {
+    font-family: var(--font-display);
+    font-variant-numeric: tabular-nums lining-nums;
+    letter-spacing: -0.03em;
+  }
+
+  /* ─── Verre dépoli (liquid glass) ───────────────────────── */
+
+  .verre {
+    background: linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.72),
+      rgba(255, 255, 255, 0.46)
+    );
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border: 1px solid var(--filet-clair);
+    box-shadow: var(--ombre-verre);
+  }
+
+  .verre-sombre {
+    background: linear-gradient(
+      145deg,
+      rgba(12, 46, 66, 0.52),
+      rgba(12, 46, 66, 0.26)
+    );
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.16) inset,
+      0 18px 44px -24px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Reflet mobile qui traverse une surface de verre */
+  .verre-reflet {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .verre-reflet::after {
+    content: "";
+    position: absolute;
+    inset: -40% -10%;
+    background: linear-gradient(
+      105deg,
+      transparent 38%,
+      rgba(255, 255, 255, 0.45) 48%,
+      transparent 58%
+    );
+    transform: translateX(-120%);
+    transition: transform 1.1s var(--ease-douce);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .verre-reflet:hover::after,
+  .verre-reflet:focus-visible::after {
+    transform: translateX(120%);
+  }
+
+  /* ─── Cartes ────────────────────────────────────────────── */
+
+  .carte {
+    background: rgba(255, 255, 255, 0.66);
+    backdrop-filter: blur(14px) saturate(130%);
+    -webkit-backdrop-filter: blur(14px) saturate(130%);
+    border: 1px solid var(--filet-clair);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--ombre-douce);
+    transition: transform 0.55s var(--ease-douce),
+      box-shadow 0.55s var(--ease-douce);
+  }
+
+  .carte-levee:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--ombre-levee);
+  }
+
+  /* Halo qui suit le curseur sur une carte */
+  .carte-halo {
+    position: relative;
+  }
+
+  .carte-halo::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.4s var(--ease-douce);
+    background: radial-gradient(
+      18rem 18rem at var(--x, 50%) var(--y, 50%),
+      rgba(78, 160, 188, 0.16),
+      transparent 70%
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .carte-halo:hover::before {
+    opacity: 1;
+  }
+
+  /* ─── Boutons ───────────────────────────────────────────── */
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    letter-spacing: 0.005em;
+    padding: 0.95rem 1.7rem;
+    transition: transform 0.4s var(--ease-douce),
+      box-shadow 0.4s var(--ease-douce), background-color 0.3s ease,
+      color 0.3s ease, border-color 0.3s ease;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .btn:active {
+    transform: scale(0.975);
+  }
+
+  .btn-primaire {
+    background: linear-gradient(
+      140deg,
+      var(--color-atlantique-3),
+      var(--color-atlantique)
+    );
+    color: var(--color-calcaire);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.18) inset,
+      0 14px 30px -14px rgba(12, 46, 66, 0.72);
+  }
+
+  .btn-primaire:hover {
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.24) inset,
+      0 20px 38px -14px rgba(12, 46, 66, 0.6);
+    transform: translateY(-2px);
+  }
+
+  .btn-verre {
+    color: var(--color-atlantique);
+    background: linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.86),
+      rgba(255, 255, 255, 0.6)
+    );
+    backdrop-filter: blur(16px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    border: 1px solid var(--filet-clair);
+    box-shadow: var(--ombre-verre);
+  }
+
+  .btn-verre:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.94);
+  }
+
+  .btn-contour {
+    color: var(--color-atlantique);
+    border: 1px solid rgba(12, 46, 66, 0.22);
+    background: transparent;
+  }
+
+  .btn-contour:hover {
+    background: rgba(12, 46, 66, 0.05);
+    border-color: rgba(12, 46, 66, 0.38);
+  }
+
+  /* ─── Apparitions au défilement ─────────────────────────── */
+
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(26px);
+    transition: opacity 0.9s var(--ease-douce), transform 0.9s var(--ease-douce);
+    transition-delay: var(--delai, 0ms);
+    will-change: opacity, transform;
+  }
+
+  [data-reveal="vu"] {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ─── Curseurs des filtres ──────────────────────────────── */
+
+  .curseur {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    background: transparent;
+    pointer-events: none;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  .curseur::-webkit-slider-runnable-track {
+    height: 100%;
+    background: transparent;
+  }
+
+  .curseur::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    pointer-events: auto;
+    height: 1.3rem;
+    width: 1.3rem;
+    border-radius: 999px;
+    background: #fff;
+    border: 1px solid rgba(12, 46, 66, 0.16);
+    box-shadow: 0 2px 10px -2px rgba(12, 46, 66, 0.4);
+    cursor: grab;
+    transition: transform 0.25s var(--ease-douce);
+  }
+
+  .curseur::-webkit-slider-thumb:hover {
+    transform: scale(1.12);
+  }
+
+  .curseur::-moz-range-track {
+    height: 100%;
+    background: transparent;
+  }
+
+  .curseur::-moz-range-thumb {
+    pointer-events: auto;
+    height: 1.3rem;
+    width: 1.3rem;
+    border-radius: 999px;
+    background: #fff;
+    border: 1px solid rgba(12, 46, 66, 0.16);
+    box-shadow: 0 2px 10px -2px rgba(12, 46, 66, 0.4);
+    cursor: grab;
+  }
+
+  /* ─── Divers ────────────────────────────────────────────── */
+
+  .defile-x {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .defile-x::-webkit-scrollbar {
+    display: none;
+  }
+
+  .masque-bords {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 3.5rem,
+      #000 calc(100% - 3.5rem),
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 3.5rem,
+      #000 calc(100% - 3.5rem),
+      transparent
+    );
+  }
+
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.035;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ─── Flottement des images d'ambiance ──────────────────── */
+
+  .flotte {
+    animation: flotte 13s var(--ease-marine) infinite;
+  }
+
+  .flotte-lent {
+    animation: flotte 19s var(--ease-marine) infinite;
+  }
+
+  .flotte-decale {
+    animation: flotte 16s var(--ease-marine) infinite;
+    animation-delay: -5s;
+  }
+}
+
+/* ─── Animations ──────────────────────────────────────────── */
+
+@keyframes flotte {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1.03);
+  }
+  50% {
+    transform: translate3d(0, -0.9%, 0) scale(1.045);
+  }
+}
+
+@keyframes respire {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+}
+
+@keyframes glisse-droite {
+  0% {
+    transform: translateX(-110%);
+  }
+  100% {
+    transform: translateX(330%);
+  }
+}
+
+@keyframes glisse-bas {
+  0% {
+    transform: translateY(-110%);
+  }
+  55%,
+  100% {
+    transform: translateY(110%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
