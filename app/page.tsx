@@ -3,7 +3,7 @@ import { BIENS, coupsDeCoeur } from "@/lib/biens";
 import { QUARTIERS } from "@/lib/quartiers";
 import { VALEURS } from "@/lib/agence";
 import { nombre } from "@/lib/format";
-import { HeroIntro } from "@/components/hero-intro";
+import { IntroAccueil } from "@/components/intro-accueil";
 import { CarrouselBiens } from "@/components/carrousel-biens";
 import { ChiffresCles } from "@/components/chiffres-cles";
 import { Temoignages } from "@/components/temoignages";
@@ -23,7 +23,7 @@ export default function Accueil() {
 
   return (
     <>
-      <HeroIntro />
+      <IntroAccueil />
 
       {/* ─── Manifeste ─────────────────────────────────────── */}
       <section className="relative mx-auto max-w-[78rem] px-5 pt-20 sm:px-8 sm:pt-28">

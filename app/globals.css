@@ -200,6 +200,36 @@
     transform: translateX(120%);
   }
 
+  /* ─── Intro au défilement de l'accueil ──────────────────── */
+
+  /* Voile radial doux : plus sombre au centre, derrière l'accroche, presque
+     transparent sur les bords. Il suit le fondu du texte, de sorte que la
+     séquence d'images reste intacte pendant l'animation. */
+  .intro-voile {
+    background: radial-gradient(
+      ellipse 72% 58% at 50% 50%,
+      rgb(15 37 49 / 0.46) 0%,
+      rgb(15 37 49 / 0.36) 45%,
+      rgb(15 37 49 / 0.14) 76%,
+      rgb(15 37 49 / 0) 100%
+    );
+  }
+
+  .intro-ombre {
+    text-shadow:
+      0 1px 2px rgb(12 46 66 / 0.45),
+      0 2px 28px rgb(12 46 66 / 0.55);
+  }
+
+  /* En-tête posé à même la séquence : plutôt qu'un bandeau sombre, qui
+     salirait l'image, le logo et le menu portent leur propre ombre. */
+  .intro-ombre-ui {
+    text-shadow:
+      0 1px 2px rgb(12 46 66 / 0.5),
+      0 2px 16px rgb(12 46 66 / 0.5);
+    filter: drop-shadow(0 1px 2px rgb(12 46 66 / 0.45));
+  }
+
   /* ─── Cartes ────────────────────────────────────────────── */
 
   .carte {

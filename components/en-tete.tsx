@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Logo } from "@/components/logo";
+import { EVENEMENT_INTRO, INTRO_INACTIVE, type EtatIntro } from "@/lib/intro";
 
 const LIENS = [
   { href: "/biens", libelle: "Nos biens" },
@@ -16,6 +17,10 @@ export function EnTete() {
   const chemin = usePathname();
   const [condense, setCondense] = useState(false);
   const [ouvert, setOuvert] = useState(false);
+  // Intro au défilement de l'accueil : logo et menu hamburger seuls le temps
+  // de l'animation, puis menu complet sur une barre transparente jusqu'à la
+  // fin de la section.
+  const [intro, setIntro] = useState<EtatIntro>(INTRO_INACTIVE);
 
   useEffect(() => {
     const auDefilement = () => setCondense(window.scrollY > 28);
@@ -24,8 +29,19 @@ export function EnTete() {
     return () => window.removeEventListener("scroll", auDefilement);
   }, []);
 
-  // Le menu mobile se referme à chaque navigation.
-  useEffect(() => setOuvert(false), [chemin]);
+  useEffect(() => {
+    const maj = (evenement: Event) =>
+      setIntro((evenement as CustomEvent<EtatIntro>).detail);
+    window.addEventListener(EVENEMENT_INTRO, maj);
+    return () => window.removeEventListener(EVENEMENT_INTRO, maj);
+  }, []);
+
+  // Le menu mobile se referme à chaque navigation, et l'en-tête reprend sa
+  // forme habituelle en quittant l'accueil.
+  useEffect(() => {
+    setOuvert(false);
+    setIntro(INTRO_INACTIVE);
+  }, [chemin]);
 
   // On bloque le défilement de la page derrière le menu ouvert,
   // et la touche Échap le referme.
@@ -47,34 +63,61 @@ export function EnTete() {
   const estActif = (href: string) =>
     href === "/" ? chemin === "/" : chemin.startsWith(href);
 
+  const { reduit, transparent } = intro;
+
   return (
     <>
       <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-5 sm:pt-5">
         <div
-          className={`verre mx-auto flex max-w-[78rem] items-center justify-between rounded-full transition-[padding,box-shadow,background-color] duration-500 ease-[var(--ease-douce)] ${
-            condense ? "px-4 py-2 sm:px-5 sm:py-2.5" : "px-4 py-3 sm:px-6 sm:py-4"
+          className={`relative mx-auto flex max-w-[78rem] items-center justify-between rounded-full transition-[padding] duration-700 ease-[var(--ease-douce)] ${
+            transparent
+              ? "intro-ombre-ui px-3 py-3 sm:px-4 sm:py-4"
+              : condense
+                ? "px-4 py-2 sm:px-5 sm:py-2.5"
+                : "px-4 py-3 sm:px-6 sm:py-4"
           }`}
         >
-          <Logo />
+          {/* Le verre dépoli est un calque à part : son opacité peut ainsi
+              fondre en douceur quand l'intro rend la barre transparente. */}
+          <span
+            aria-hidden="true"
+            className={`verre absolute inset-0 rounded-full transition-opacity duration-700 ease-[var(--ease-douce)] ${
+              transparent ? "opacity-0" : "opacity-100"
+            }`}
+          />
 
-          <nav aria-label="Navigation principale" className="hidden lg:block">
+          <div className="relative">
+            <Logo clair={transparent} />
+          </div>
+
+          <nav
+            aria-label="Navigation principale"
+            className={`relative hidden transition-[opacity,visibility] duration-700 ease-[var(--ease-douce)] lg:block ${
+              reduit ? "lg:invisible lg:opacity-0" : "lg:visible lg:opacity-100"
+            }`}
+          >
             <ul className="flex items-center gap-1">
               {LIENS.map((lien) => (
                 <li key={lien.href}>
                   <Link
                     href={lien.href}
+                    tabIndex={reduit ? -1 : 0}
                     aria-current={estActif(lien.href) ? "page" : undefined}
-                    className={`relative rounded-full px-4 py-2 text-[0.9375rem] font-medium transition-colors duration-300 ${
-                      estActif(lien.href)
-                        ? "text-atlantique"
-                        : "text-encre-2 hover:text-atlantique"
+                    className={`relative rounded-full px-4 py-2 text-[0.9375rem] font-medium transition-colors duration-500 ${
+                      transparent
+                        ? estActif(lien.href)
+                          ? "text-calcaire"
+                          : "text-ecume/80 hover:text-calcaire"
+                        : estActif(lien.href)
+                          ? "text-atlantique"
+                          : "text-encre-2 hover:text-atlantique"
                     }`}
                   >
                     {lien.libelle}
                     <span
-                      className={`absolute inset-x-4 -bottom-0.5 h-px origin-center bg-azur transition-transform duration-500 ease-[var(--ease-douce)] ${
-                        estActif(lien.href) ? "scale-x-100" : "scale-x-0"
-                      }`}
+                      className={`absolute inset-x-4 -bottom-0.5 h-px origin-center transition-transform duration-500 ease-[var(--ease-douce)] ${
+                        transparent ? "bg-calcaire" : "bg-azur"
+                      } ${estActif(lien.href) ? "scale-x-100" : "scale-x-0"}`}
                     />
                   </Link>
                 </li>
@@ -82,11 +125,14 @@ export function EnTete() {
             </ul>
           </nav>
 
-          <div className="flex items-center gap-2">
+          <div className="relative flex items-center gap-2">
             <Link
               href="/estimation"
-              className={`btn btn-primaire verre-reflet hidden sm:inline-flex ${
-                condense ? "px-5 py-2.5 text-sm" : "px-6 py-3 text-sm"
+              tabIndex={reduit ? -1 : 0}
+              className={`btn verre-reflet hidden transition-[opacity,visibility] duration-700 ease-[var(--ease-douce)] sm:inline-flex ${
+                transparent ? "btn-verre" : "btn-primaire"
+              } ${condense && !transparent ? "px-5 py-2.5 text-sm" : "px-6 py-3 text-sm"} ${
+                reduit ? "sm:invisible sm:opacity-0" : "sm:visible sm:opacity-100"
               }`}
             >
               Estimer mon bien
@@ -97,7 +143,11 @@ export function EnTete() {
               onClick={() => setOuvert((v) => !v)}
               aria-expanded={ouvert}
               aria-controls="menu-mobile"
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-[var(--filet)] text-atlantique transition-colors duration-300 hover:bg-atlantique/5 lg:hidden"
+              className={`h-11 w-11 items-center justify-center rounded-full border transition-colors duration-500 ${
+                transparent
+                  ? "border-calcaire/35 text-calcaire hover:bg-calcaire/10"
+                  : "border-[var(--filet)] text-atlantique hover:bg-atlantique/5"
+              } ${reduit ? "flex" : "flex lg:hidden"}`}
             >
               <span className="sr-only">
                 {ouvert ? "Fermer le menu" : "Ouvrir le menu"}
@@ -124,11 +174,12 @@ export function EnTete() {
         </div>
       </header>
 
-      {/* Menu mobile */}
+      {/* Menu mobile — également sur grand écran le temps de l'intro, où le
+          hamburger est la seule navigation. */}
       <div
         id="menu-mobile"
         aria-hidden={!ouvert}
-        className={`fixed inset-0 z-40 lg:hidden ${
+        className={`fixed inset-0 z-40 ${reduit ? "" : "lg:hidden"} ${
           ouvert ? "" : "pointer-events-none"
         }`}
       >
@@ -140,7 +191,9 @@ export function EnTete() {
         />
         <nav
           aria-label="Navigation mobile"
-          className={`verre absolute inset-x-3 top-[5.5rem] rounded-[2rem] p-5 transition-all duration-500 ease-[var(--ease-douce)] ${
+          // Les règles lg: ne jouent que pendant l'intro : partout ailleurs
+          // le tiroir est masqué à cette largeur.
+          className={`verre absolute inset-x-3 top-[5.5rem] rounded-[2rem] p-5 transition-all duration-500 ease-[var(--ease-douce)] lg:inset-x-auto lg:right-5 lg:w-[24rem] ${
             ouvert
               ? "translate-y-0 opacity-100"
               : "pointer-events-none -translate-y-4 opacity-0"

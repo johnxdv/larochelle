@@ -46,20 +46,20 @@ export function Logo({ clair = false, className = "" }: Props) {
       aria-label={`${AGENCE.nom} — accueil`}
     >
       <Monogramme
-        className={`h-9 w-9 shrink-0 transition-transform duration-700 ease-[var(--ease-douce)] group-hover:rotate-[8deg] ${
+        className={`h-9 w-9 shrink-0 transition-[transform,color] duration-700 ease-[var(--ease-douce)] group-hover:rotate-[8deg] ${
           clair ? "text-calcaire" : "text-atlantique"
         }`}
       />
       <span className="flex flex-col leading-none">
         <span
-          className={`titre text-[1.4rem] tracking-[0.02em] ${
+          className={`titre text-[1.4rem] tracking-[0.02em] transition-colors duration-700 ease-[var(--ease-douce)] ${
             clair ? "text-calcaire" : "text-atlantique"
           }`}
         >
           Ashley
         </span>
         <span
-          className={`mt-[0.2rem] text-[0.5625rem] font-semibold tracking-[0.3em] uppercase ${
+          className={`mt-[0.2rem] text-[0.5625rem] font-semibold tracking-[0.3em] uppercase transition-colors duration-700 ease-[var(--ease-douce)] ${
             clair ? "text-ecume/70" : "text-encre-3"
           }`}
         >

@@ -1,35 +1,46 @@
-# Séquence d'intro au défilement
+# Séquence de l'intro au défilement
 
-Ce dossier accueille la séquence d'images lue sur un canvas par le héro de la
-page d'accueil (`components/hero-intro.tsx`).
+Ce dossier contient la séquence d'images lue sur un canvas par l'intro de la
+page d'accueil (`components/intro-defilement.tsx`).
 
-## Déposer une séquence
+## Nommage
 
-1. Exporter la vidéo en images numérotées, par exemple avec ffmpeg :
+`frame-001.jpg`, `frame-002.jpg`, … — trois chiffres, à partir de 1, sans
+trou dans la numérotation.
 
-   ```bash
-   ffmpeg -i intro.mp4 -vf "fps=24,scale=1920:-2" -q:v 4 public/intro/intro-%04d.jpg
-   ```
+Le nombre d'images n'est écrit nulle part : il est **compté à la compilation**
+par `components/intro-accueil.tsx`, qui lit ce dossier. Ajouter ou retirer des
+images suffit, il n'y a aucun réglage à mettre à jour.
 
-   Viser 90 à 180 images : au-delà, le préchargement devient lourd sur mobile.
+## Remplacer la séquence
 
-2. Ouvrir `lib/intro.ts` et renseigner :
+```bash
+rm public/intro/frame-*.jpg
+ffmpeg -i intro.mp4 -vf "fps=24,scale=1920:-2" -q:v 4 public/intro/frame-%03d.jpg
+```
 
-   ```ts
-   actif: true,
-   nombreImages: 120,        // le nombre réel d'images exportées
-   longueurDefilement: 3,    // en hauteurs d'écran
-   ```
+Repères utiles :
 
-3. C'est tout. Le héro bascule du mode photographie au mode canvas, et la
-   lecture suit le défilement.
+- **Nombre d'images** — entre 120 et 300. Au-delà, le poids total pèse sur les
+  connexions mobiles ; en deçà, le défilement paraît saccadé.
+- **Largeur** — 1920 px suffit : les images sont dessinées sur un canvas, qui
+  les recadre en « cover ». Viser 100 à 150 Ko par image.
+- **Première et dernière image** — ce sont les deux plus vues : la première
+  s'affiche au chargement sous l'accroche, la dernière reste à l'écran à la fin
+  de l'animation et sert de repli sous `prefers-reduced-motion`. Les choisir
+  comme deux photographies à part entière.
 
-## Nommage attendu
+## Durée de l'animation
 
-`intro-0001.jpg`, `intro-0002.jpg`, … (quatre chiffres, à partir de 1).
-Le format est configurable dans `INTRO.fichier()`.
+La hauteur du couloir de défilement est fixée par la classe `h-[320vh]` de la
+section, dans `components/intro-defilement.tsx` : il faut trois écrans et demi
+de défilement pour traverser la section. Les repères qui décident du moment où
+le texte s'efface et revient sont rassemblés dans `REPERES`, côté
+`lib/intro.ts`.
 
-## Tant que la séquence est absente
+## Chargement
 
-Le héro affiche la photographie de repli définie dans `INTRO.repli`
-— par défaut les tours du Vieux-Port.
+La première image est posée dans le HTML (`fetchPriority="high"`) : elle
+s'affiche immédiatement. Les autres sont téléchargées en arrière-plan, six à la
+fois. Tant qu'une image n'est pas arrivée, le canvas affiche la plus proche
+déjà chargée — le défilement n'attend jamais.

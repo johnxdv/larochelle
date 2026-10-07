@@ -49,21 +49,42 @@ Pour ouvrir le site à l'indexation, retirer ces trois éléments.
 | `lib/agence.ts` | identité, coordonnées, équipe, valeurs, étapes de vente, témoignages |
 | `lib/photos.ts` | crédits photo (source de `CREDITS.md`) |
 | `app/globals.css` | palette, typographies, rayons, effets de verre, animations |
+| `lib/intro.ts` | repères de l'intro au défilement et contrat avec l'en-tête |
 
 Les biens sont référencés par `slug` : la fiche `/biens/<slug>` est générée
 automatiquement pour chaque entrée de `BIENS`, de même que les filtres, dont
 les bornes de prix et de surface se calculent sur le portefeuille réel.
 
-## Intro vidéo au défilement
+## Intro au défilement
 
-Le héro de l'accueil sait déjà lire une **séquence d'images sur un canvas**,
-pilotée par le défilement. Tant qu'aucune séquence n'est fournie, il affiche
-une photographie. Pour la brancher :
+L'accueil s'ouvre sur une **séquence d'images rendue sur un canvas**, pilotée
+par le défilement — jamais de lecture vidéo. La section reste fixée à l'écran
+et le défilement avance ou recule dans la séquence.
 
-1. déposer les images dans `public/intro/` (voir `public/intro/LISEZMOI.md`) ;
-2. dans `lib/intro.ts`, passer `actif: true` et renseigner `nombreImages`.
+Le déroulé :
 
-Le composant bascule seul du mode photographie au mode canvas.
+1. **au chargement** — la première image en plein écran sous un voile radial
+   doux, l'accroche centrée, et pour tout en-tête le logo et le hamburger ;
+2. **au premier mouvement** — le texte et le voile s'effacent, l'image seule
+   défile ;
+3. **à la fin** — le voile et l'accroche reviennent en fondu avec le bouton
+   « Estimer mon bien », et l'en-tête reprend son menu complet sur une barre
+   transparente ;
+4. **plus bas dans la page** — la barre redevient claire. En remontant, tout
+   se rejoue à l'envers.
+
+La section prévient l'en-tête de son état par un évènement, dont le contrat
+vit dans [lib/intro.ts](lib/intro.ts) : l'en-tête n'a ainsi rien à savoir de
+l'accueil.
+
+**Remplacer la séquence** : déposer les images dans `public/intro/`
+(`frame-001.jpg`, `frame-002.jpg`, …). Le nombre d'images est compté à la
+compilation, il n'y a aucun réglage à mettre à jour. Voir
+[public/intro/LISEZMOI.md](public/intro/LISEZMOI.md).
+
+Sous `prefers-reduced-motion`, la section se réduit à la dernière image seule,
+avec le texte, le bouton et le menu habituels — aucune image de séquence n'est
+alors téléchargée.
 
 ## Moteur d'estimation
 
@@ -111,7 +132,7 @@ components/             en-tête, héro, cartes, galerie, filtres, formulaires�
 lib/                    données et mise en forme
 public/
   images/               67 photographies Unsplash
-  intro/                séquence du héro (vide par défaut)
+  intro/                séquence de l'intro au défilement
 ```
 
 ## Crédits
