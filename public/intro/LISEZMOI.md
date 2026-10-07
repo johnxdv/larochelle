@@ -30,6 +30,23 @@ Repères utiles :
   de l'animation et sert de repli sous `prefers-reduced-motion`. Les choisir
   comme deux photographies à part entière.
 
+## La boucle vivante — `scene.mp4`
+
+Arrivé à la dernière image, une boucle vidéo muette prend la place du canvas :
+elle **part et revient exactement sur `frame-240.jpg`**, qui lui sert aussi de
+poster. Le relais est instantané, sans fondu — les deux montrent la même
+image, il n'y a donc rien à masquer. En remontant, la vidéo se met en pause,
+se remet à zéro et le canvas reprend la main.
+
+Pour la remplacer : garder une vidéo dont la première et la dernière image
+sont la dernière image de la séquence, sinon le relais se verra. Muette,
+H.264, et légère — la nôtre fait 864 Ko pour dix secondes en 1280 × 720, ce
+qui suffit largement puisqu'elle est redimensionnée en « cover ».
+
+Elle n'est téléchargée que lorsqu'elle peut servir : la balise porte
+`preload="none"`, et le composant ne passe à `auto` qu'une fois certain que
+l'animation aura lieu — donc jamais sous `prefers-reduced-motion`.
+
 ## Durée de l'animation
 
 La hauteur du couloir de défilement est fixée par la classe `h-[320vh]` de la

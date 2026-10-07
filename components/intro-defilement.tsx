@@ -10,6 +10,9 @@ import {
   type EtatIntro,
 } from "@/lib/intro";
 
+/** Suite vivante de la dernière image : la boucle part et revient sur elle. */
+const SCENE = "/intro/scene.mp4";
+
 /**
  * Préférence système pour les mouvements réduits. Un seul point de vérité :
  * les trois effets du composant s'arrêtent là-dessus, et la mise en forme
@@ -55,6 +58,10 @@ function plusProcheChargee(chargees: Uint8Array, cible: number) {
  * Au chargement, la première image occupe l'écran sous un voile radial doux et
  * l'accroche est centrée ; l'en-tête se réduit au logo et au hamburger. Dès le
  * premier mouvement, le texte et le voile s'effacent et l'image seule défile.
+ * Arrivé à la dernière image, une boucle vidéo muette prend la place du canvas
+ * sans saut visible : elle part de cette même image, qui lui sert de poster.
+ * En remontant, elle se met en pause et le canvas reprend la main.
+ *
  * À la fin, le voile et l'accroche reviennent en fondu, accompagnés du bouton
  * d'estimation, et l'en-tête reprend son menu complet sur une barre
  * transparente — qui redevient claire dès que l'on descend plus bas.
@@ -66,6 +73,7 @@ function plusProcheChargee(chargees: Uint8Array, cible: number) {
 export function IntroDefilement({ nombreImages }: { nombreImages: number }) {
   const section = useRef<HTMLElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
+  const video = useRef<HTMLVideoElement>(null);
   const calque = useRef<HTMLDivElement>(null);
   const images = useRef<HTMLImageElement[]>([]);
   const chargees = useRef(new Uint8Array(nombreImages));
@@ -75,6 +83,8 @@ export function IntroDefilement({ nombreImages }: { nombreImages: number }) {
   // Le bouton ne prend sa place qu'une fois le texte effacé, et paraît à la fin.
   const [placeBouton, setPlaceBouton] = useState(false);
   const [boutonVisible, setBoutonVisible] = useState(false);
+  // La boucle vidéo prend le relais du canvas sur la dernière image.
+  const [scene, setScene] = useState(false);
 
   const dessiner = useCallback(() => {
     const toile = canvas.current;
@@ -109,6 +119,9 @@ export function IntroDefilement({ nombreImages }: { nombreImages: number }) {
   // première est déjà dans le HTML, les autres arrivent en arrière-plan.
   useEffect(() => {
     if (mouvementsReduits()) return;
+
+    // La boucle n'est téléchargée que si elle peut servir.
+    if (video.current) video.current.preload = "auto";
 
     const tableau = new Array<HTMLImageElement>(nombreImages);
     const etat = new Uint8Array(nombreImages);
@@ -153,6 +166,19 @@ export function IntroDefilement({ nombreImages }: { nombreImages: number }) {
       window.removeEventListener("resize", surRedimension);
     };
   }, [nombreImages, dessiner, redimensionner]);
+
+  // La boucle tourne tant qu'elle est à l'écran ; sinon elle se remet sur sa
+  // première image, celle du canvas, pour repartir sans saut.
+  useEffect(() => {
+    const lecteur = video.current;
+    if (!lecteur) return;
+    if (scene) {
+      void lecteur.play().catch(() => {});
+      return;
+    }
+    lecteur.pause();
+    if (lecteur.currentTime !== 0) lecteur.currentTime = 0;
+  }, [scene]);
 
   // L'en-tête se réduit au logo et au hamburger pendant toute l'animation.
   useEffect(() => {
@@ -199,6 +225,8 @@ export function IntroDefilement({ nombreImages }: { nombreImages: number }) {
       setPlaceBouton((prec) => (prec === place ? prec : place));
       const visible = p >= REPERES.debutRetour;
       setBoutonVisible((prec) => (prec === visible ? prec : visible));
+      const boucle = p >= REPERES.finSequence;
+      setScene((prec) => (prec === boucle ? prec : boucle));
 
       prevenir({
         reduit: p < REPERES.debutRetour,
@@ -252,6 +280,24 @@ export function IntroDefilement({ nombreImages }: { nombreImages: number }) {
           ref={canvas}
           aria-hidden="true"
           className="absolute inset-0 h-full w-full motion-reduce:hidden"
+        />
+
+        {/* Boucle vivante, posée sur le canvas à partir de la dernière image.
+            Son poster est cette image : rien ne saute, même avant son
+            chargement. Pas de fondu — les deux montrent la même image. */}
+        <video
+          ref={video}
+          src={SCENE}
+          poster={cheminImage(nombreImages)}
+          loop
+          muted
+          playsInline
+          preload="none"
+          aria-hidden="true"
+          tabIndex={-1}
+          className={`absolute inset-0 h-full w-full object-cover motion-reduce:hidden ${
+            scene ? "opacity-100" : "opacity-0"
+          }`}
         />
 
         {/* Accroche centrée, sur un voile radial doux. Les deux suivent le même

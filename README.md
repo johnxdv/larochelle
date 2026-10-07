@@ -67,10 +67,14 @@ Le déroulé :
    doux, l'accroche centrée, et pour tout en-tête le logo et le hamburger ;
 2. **au premier mouvement** — le texte et le voile s'effacent, l'image seule
    défile ;
-3. **à la fin** — le voile et l'accroche reviennent en fondu avec le bouton
+3. **à la dernière image** — une boucle vidéo muette (`public/intro/scene.mp4`)
+   prend la place du canvas sans saut visible : elle part de cette même image,
+   qui lui sert de poster. En remontant, elle se met en pause et le canvas
+   reprend la main ;
+4. **à la fin** — le voile et l'accroche reviennent en fondu avec le bouton
    « Estimer mon bien », et l'en-tête reprend son menu complet sur une barre
    transparente ;
-4. **plus bas dans la page** — la barre redevient claire. En remontant, tout
+5. **plus bas dans la page** — la barre redevient claire. En remontant, tout
    se rejoue à l'envers.
 
 La section prévient l'en-tête de son état par un évènement, dont le contrat
@@ -83,8 +87,8 @@ compilation, il n'y a aucun réglage à mettre à jour. Voir
 [public/intro/LISEZMOI.md](public/intro/LISEZMOI.md).
 
 Sous `prefers-reduced-motion`, la section se réduit à la dernière image seule,
-avec le texte, le bouton et le menu habituels — aucune image de séquence n'est
-alors téléchargée.
+avec le texte, le bouton et le menu habituels — ni les images de séquence ni
+la vidéo ne sont alors téléchargées.
 
 ## Moteur d'estimation
 
