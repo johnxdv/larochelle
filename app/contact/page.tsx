@@ -91,13 +91,6 @@ export default function PageContact() {
           </Apparition>
         </div>
 
-        <Apparition delai={200}>
-          <p className="mt-8 text-xs text-encre-3">
-            Site de démonstration : l’adresse, le téléphone et l’adresse
-            électronique ci-dessus sont fictifs, et le formulaire n’envoie
-            réellement aucun message.
-          </p>
-        </Apparition>
       </section>
     </>
   );

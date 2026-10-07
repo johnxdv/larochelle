@@ -115,20 +115,7 @@ export function PiedDePage() {
 
         <div className="mt-14 flex flex-col gap-4 border-t border-ecume/15 pt-7 text-xs text-ecume/50 sm:flex-row sm:items-center sm:justify-between">
           <p>
-            © {annee} {AGENCE.nom}. Site de démonstration — biens, prix et
-            témoignages fictifs.
-          </p>
-          <p>
-            Photographies&nbsp;:{" "}
-            <a
-              href="https://unsplash.com/license"
-              target="_blank"
-              rel="noreferrer noopener"
-              className="underline underline-offset-4 transition-colors duration-300 hover:text-calcaire"
-            >
-              licence Unsplash
-            </a>{" "}
-            — crédits dans CREDITS.md
+            © {annee} {AGENCE.nom}
           </p>
         </div>
       </div>

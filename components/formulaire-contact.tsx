@@ -69,9 +69,6 @@ export function FormulaireContact({
           vingt-quatre heures ouvrées, par téléphone ou par courriel, selon ce
           que vous préférez.
         </p>
-        <p className="mt-6 text-xs text-encre-3">
-          Site de démonstration : ce formulaire n’envoie réellement aucun message.
-        </p>
         <button
           type="button"
           onClick={() => setEnvoye(false)}

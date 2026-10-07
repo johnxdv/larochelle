@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Logo } from "@/components/logo";
+import { BoutonEstimer } from "@/components/bouton-estimer";
 import { EVENEMENT_INTRO, INTRO_INACTIVE, type EtatIntro } from "@/lib/intro";
 
 const LIENS = [
@@ -220,13 +221,11 @@ export function EnTete() {
               </li>
             ))}
           </ul>
-          <Link
-            href="/estimation"
+          <BoutonEstimer
+            variante="primaire"
             tabIndex={ouvert ? 0 : -1}
-            className="btn btn-primaire verre-reflet mt-5 w-full"
-          >
-            Estimer mon bien
-          </Link>
+            className="mt-5 w-full"
+          />
         </nav>
       </div>
     </>

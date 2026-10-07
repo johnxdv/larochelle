@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Photo } from "@/components/photo";
 import { Apparition } from "@/components/apparition";
+import { BoutonEstimer } from "@/components/bouton-estimer";
 
 type Props = {
   surtitre?: string;
@@ -46,29 +47,39 @@ export function BandeauCta({
             </h2>
             <p className="plume mt-5 max-w-[52ch] text-ecume/85">{texte}</p>
 
+            {/* Le bouton d'estimation garde partout le même traitement : dès
+                qu'une action mène à /estimation, elle passe par son composant. */}
             <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <Link
-                href={actionPrincipale.href}
-                className="btn btn-verre verre-reflet px-7 py-4 text-base"
-              >
-                {actionPrincipale.libelle}
-                <svg viewBox="0 0 16 16" className="h-4 w-4" fill="none" aria-hidden="true">
-                  <path
-                    d="M3 8h10M9 4l4 4-4 4"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </Link>
-              {actionSecondaire ? (
+              {actionPrincipale.href === "/estimation" ? (
+                <BoutonEstimer className="px-7 py-4 text-base" />
+              ) : (
                 <Link
-                  href={actionSecondaire.href}
-                  className="btn px-7 py-4 text-base text-calcaire ring-1 ring-calcaire/35 transition-colors hover:bg-calcaire/10"
+                  href={actionPrincipale.href}
+                  className="btn btn-verre verre-reflet px-7 py-4 text-base"
                 >
-                  {actionSecondaire.libelle}
+                  {actionPrincipale.libelle}
+                  <svg viewBox="0 0 16 16" className="h-4 w-4" fill="none" aria-hidden="true">
+                    <path
+                      d="M3 8h10M9 4l4 4-4 4"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
                 </Link>
+              )}
+              {actionSecondaire ? (
+                actionSecondaire.href === "/estimation" ? (
+                  <BoutonEstimer className="px-7 py-4 text-base" />
+                ) : (
+                  <Link
+                    href={actionSecondaire.href}
+                    className="btn px-7 py-4 text-base text-calcaire ring-1 ring-calcaire/35 transition-colors hover:bg-calcaire/10"
+                  >
+                    {actionSecondaire.libelle}
+                  </Link>
+                )
               ) : null}
             </div>
           </div>

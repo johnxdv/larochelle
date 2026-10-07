@@ -3,8 +3,10 @@
 import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import afficheMobile from '@/public/images/quai-facades.jpg'
-import afficheOrdinateur from '@/public/images/vue-aerienne-ville.jpg'
+// Image fixe de la scène 3D, capturée dans son cadrage d'ouverture : le
+// passage de l'affiche à la scène animée est ainsi invisible.
+import afficheMobile from '@/public/images/estimation/scene-mobile.webp'
+import afficheOrdinateur from '@/public/images/estimation/scene-ordinateur.webp'
 import './estimation.css'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 // Three.js pèse à lui seul plus que tout le reste du site : le décor est donc

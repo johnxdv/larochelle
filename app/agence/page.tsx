@@ -172,13 +172,6 @@ export default function PageAgence() {
             </Apparition>
           ))}
         </div>
-
-        <Apparition delai={120}>
-          <p className="mt-6 text-xs text-encre-3">
-            Les portraits sont représentés par leurs initiales : ce site de
-            démonstration n’utilise aucune photographie de personne réelle.
-          </p>
-        </Apparition>
       </section>
 
       {/* ─── Secteurs ──────────────────────────────────────── */}

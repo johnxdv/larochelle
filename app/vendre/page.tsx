@@ -4,6 +4,7 @@ import { ARGUMENTS_VENDEUR, ETAPES_VENTE } from "@/lib/agence";
 import { ChiffresCles } from "@/components/chiffres-cles";
 import { BandeauCta } from "@/components/bandeau-cta";
 import { Apparition } from "@/components/apparition";
+import { BoutonEstimer } from "@/components/bouton-estimer";
 import { Photo } from "@/components/photo";
 
 export const metadata: Metadata = {
@@ -29,18 +30,7 @@ export default function PageVendre() {
               finit sous sa valeur. Tout notre travail tient dans cet écart.
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <Link href="/estimation" className="btn btn-primaire verre-reflet">
-                Estimer mon bien
-                <svg viewBox="0 0 16 16" className="h-4 w-4" fill="none" aria-hidden="true">
-                  <path
-                    d="M3 8h10M9 4l4 4-4 4"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </Link>
+              <BoutonEstimer variante="primaire" />
               <Link href="/contact" className="btn btn-contour">
                 Parler à un conseiller
               </Link>

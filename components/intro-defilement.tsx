@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { BoutonEstimer } from "@/components/bouton-estimer";
 import {
   INTRO_INACTIVE,
   REPERES,
@@ -320,28 +320,7 @@ export function IntroDefilement({ nombreImages }: { nombreImages: number }) {
                 placeBouton ? "block" : "hidden"
               } ${boutonVisible ? "pointer-events-auto opacity-100" : "opacity-0"}`}
             >
-              <Link
-                href="/estimation"
-                className="btn btn-liquide reflet-lent mt-10 px-8 py-4 text-base sm:mt-12"
-              >
-                <span className="btn-libelle">
-                  Estimer mon bien
-                  <svg
-                    viewBox="0 0 16 16"
-                    className="h-4 w-4"
-                    fill="none"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M3 8h10M9 4l4 4-4 4"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </span>
-              </Link>
+              <BoutonEstimer className="mt-10 px-8 py-4 text-base sm:mt-12" />
             </div>
           </div>
         </div>
