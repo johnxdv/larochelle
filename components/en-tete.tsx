@@ -13,6 +13,10 @@ const LIENS = [
   { href: "/contact", libelle: "Contact" },
 ] as const;
 
+/** Contact est promu en bouton à droite : inutile de le répéter dans la barre.
+    Le tiroir mobile, lui, affiche bien les quatre liens. */
+const LIENS_BARRE = LIENS.filter((lien) => lien.href !== "/contact");
+
 export function EnTete() {
   const chemin = usePathname();
   const [condense, setCondense] = useState(false);
@@ -97,7 +101,7 @@ export function EnTete() {
             }`}
           >
             <ul className="flex items-center gap-1">
-              {LIENS.map((lien) => (
+              {LIENS_BARRE.map((lien) => (
                 <li key={lien.href}>
                   <Link
                     href={lien.href}
@@ -127,15 +131,16 @@ export function EnTete() {
 
           <div className="relative flex items-center gap-2">
             <Link
-              href="/estimation"
+              href="/contact"
               tabIndex={reduit ? -1 : 0}
-              className={`btn verre-reflet hidden transition-[opacity,visibility] duration-700 ease-[var(--ease-douce)] sm:inline-flex ${
-                transparent ? "btn-verre" : "btn-primaire"
+              aria-current={estActif("/contact") ? "page" : undefined}
+              className={`btn reflet-lent hidden transition-[opacity,visibility] duration-700 ease-[var(--ease-douce)] sm:inline-flex ${
+                transparent ? "btn-liquide" : "btn-primaire"
               } ${condense && !transparent ? "px-5 py-2.5 text-sm" : "px-6 py-3 text-sm"} ${
                 reduit ? "sm:invisible sm:opacity-0" : "sm:visible sm:opacity-100"
               }`}
             >
-              Estimer mon bien
+              <span className="btn-libelle">Contact</span>
             </Link>
 
             <button

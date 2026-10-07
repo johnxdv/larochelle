@@ -202,23 +202,26 @@
 
   /* ─── Intro au défilement de l'accueil ──────────────────── */
 
-  /* Voile radial doux : plus sombre au centre, derrière l'accroche, presque
-     transparent sur les bords. Il suit le fondu du texte, de sorte que la
-     séquence d'images reste intacte pendant l'animation. */
+  /* Assombrissement radial resserré juste derrière le texte, à peine
+     perceptible : l'image reste nette et naturelle. L'essentiel de la
+     lisibilité tient à l'ombre portée du texte, ci-dessous. */
   .intro-voile {
     background: radial-gradient(
-      ellipse 72% 58% at 50% 50%,
-      rgb(15 37 49 / 0.46) 0%,
-      rgb(15 37 49 / 0.36) 45%,
-      rgb(15 37 49 / 0.14) 76%,
-      rgb(15 37 49 / 0) 100%
+      ellipse 50% 30% at 50% 50%,
+      rgb(10 30 42 / 0.26) 0%,
+      rgb(10 30 42 / 0.15) 52%,
+      rgb(10 30 42 / 0) 100%
     );
   }
 
+  /* Ombre portée douce et sombre, en trois couches : un liseré serré qui
+     détache les lettres, une ombre moyenne, et un halo large qui assombrit
+     l'image au plus près des glyphes — sans la délaver. */
   .intro-ombre {
     text-shadow:
-      0 1px 2px rgb(12 46 66 / 0.45),
-      0 2px 28px rgb(12 46 66 / 0.55);
+      0 1px 2px rgb(8 26 36 / 0.55),
+      0 2px 10px rgb(8 26 36 / 0.45),
+      0 6px 40px rgb(8 26 36 / 0.4);
   }
 
   /* En-tête posé à même la séquence : plutôt qu'un bandeau sombre, qui
@@ -271,6 +274,94 @@
 
   .carte-halo:hover::before {
     opacity: 1;
+  }
+
+  /* ─── Verre liquide ─────────────────────────────────────── */
+
+  /* Surface dépolie, reflet clair sur le bord supérieur, liseré fin lumineux. */
+  .btn-liquide {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    color: var(--color-atlantique);
+    background: linear-gradient(
+      165deg,
+      rgba(255, 255, 255, 0.66),
+      rgba(255, 255, 255, 0.4)
+    );
+    backdrop-filter: blur(22px) saturate(180%);
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.62);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.95),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.3),
+      0 16px 38px -18px rgba(12, 46, 66, 0.6);
+  }
+
+  /* Éclat au survol : une lumière douce qui descend du bord supérieur. */
+  .btn-liquide::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+      130% 150% at 50% -10%,
+      rgba(255, 255, 255, 0.85),
+      rgba(255, 255, 255, 0) 62%
+    );
+    opacity: 0;
+    transition: opacity 0.55s var(--ease-douce);
+    pointer-events: none;
+  }
+
+  .btn-liquide:hover,
+  .btn-liquide:focus-visible {
+    border-color: rgba(255, 255, 255, 0.82);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.36),
+      0 22px 46px -18px rgba(12, 46, 66, 0.5);
+  }
+
+  .btn-liquide:hover::before,
+  .btn-liquide:focus-visible::before {
+    opacity: 1;
+  }
+
+  /* Reflet qui traverse le bouton, lentement et de loin en loin. */
+  .reflet-lent {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+
+  .reflet-lent::after {
+    content: "";
+    position: absolute;
+    top: -60%;
+    bottom: -60%;
+    left: 0;
+    z-index: 1;
+    width: 34%;
+    background: linear-gradient(
+      100deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.55) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    transform: translateX(-200%) skewX(-14deg);
+    animation: reflet-liquide 7.5s var(--ease-marine) 2s infinite;
+    pointer-events: none;
+  }
+
+  /* Le libellé passe devant l'éclat et le reflet. */
+  .btn-libelle {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
   }
 
   /* ─── Boutons ───────────────────────────────────────────── */
@@ -488,6 +579,18 @@
   }
 }
 
+@keyframes reflet-liquide {
+  0% {
+    transform: translateX(-200%) skewX(-14deg);
+  }
+  16% {
+    transform: translateX(420%) skewX(-14deg);
+  }
+  100% {
+    transform: translateX(420%) skewX(-14deg);
+  }
+}
+
 @keyframes glisse-droite {
   0% {
     transform: translateX(-110%);
@@ -523,5 +626,10 @@
   [data-reveal] {
     opacity: 1 !important;
     transform: none !important;
+  }
+
+  .reflet-lent::after {
+    animation: none !important;
+    opacity: 0 !important;
   }
 }

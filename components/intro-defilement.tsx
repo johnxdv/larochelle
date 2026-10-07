@@ -309,19 +309,9 @@ export function IntroDefilement({ nombreImages }: { nombreImages: number }) {
           <div aria-hidden="true" className="intro-voile absolute inset-0" />
 
           <div className="relative flex max-w-[54rem] flex-col items-center px-5 text-center sm:px-8">
-            <p className="surtitre intro-ombre text-ecume/90">
-              La Rochelle · Île de Ré · Île d’Oléron
-            </p>
-
-            <h1 className="titre intro-ombre mt-5 text-[clamp(2.55rem,8.5vw,6.25rem)] text-calcaire">
+            <h1 className="titre intro-ombre text-[clamp(2.55rem,8.5vw,6.25rem)] text-calcaire">
               Des adresses que la ville ne montre pas.
             </h1>
-
-            <p className="plume intro-ombre mt-6 max-w-[46ch] text-[1.0625rem] text-ecume/90 sm:text-lg">
-              Propriétés d’exception, demeures de caractère et appartements avec
-              vue mer. Une maison de transaction qui ne travaille que trois
-              territoires, et les connaît rue par rue.
-            </p>
 
             {/* Le bouton ne prend sa place qu'une fois le texte effacé : il ne
                 décale jamais l'accroche au chargement. */}
@@ -332,23 +322,25 @@ export function IntroDefilement({ nombreImages }: { nombreImages: number }) {
             >
               <Link
                 href="/estimation"
-                className="btn btn-verre verre-reflet mt-10 px-7 py-4 text-base"
+                className="btn btn-liquide reflet-lent mt-10 px-8 py-4 text-base sm:mt-12"
               >
-                Estimer mon bien
-                <svg
-                  viewBox="0 0 16 16"
-                  className="h-4 w-4"
-                  fill="none"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M3 8h10M9 4l4 4-4 4"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <span className="btn-libelle">
+                  Estimer mon bien
+                  <svg
+                    viewBox="0 0 16 16"
+                    className="h-4 w-4"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M3 8h10M9 4l4 4-4 4"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </span>
               </Link>
             </div>
           </div>
