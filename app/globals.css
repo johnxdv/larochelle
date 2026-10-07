@@ -633,3 +633,182 @@
     opacity: 0 !important;
   }
 }
+
+/* ───────────────────────────────────────────────────────────
+   Parcours d'estimation — pont de jetons
+
+   Le moteur est repris tel quel : ses composants gardent leurs
+   classes (`bg-ink`, `text-brass`, `rounded-carte`, `font-mono`…).
+   On redéfinit seulement ce que ces noms désignent, pour qu'ils
+   rendent la palette et les typographies de cette maison.
+   Rien ici ne touche au calcul.
+   ─────────────────────────────────────────────────────────── */
+
+@theme inline {
+  /* Surfaces */
+  --color-ivoire: var(--color-calcaire);
+  --color-papier: #fdfcfa;
+  --color-beige: var(--color-sable-2);
+  --color-anthracite: var(--color-atlantique-2);
+  --color-nuit: #0a2534;
+
+  /* Accent — en aplat seulement, jamais en texte : pas d'or sur ce site */
+  --color-or: var(--color-azur);
+  --color-or-clair: var(--color-azur-2);
+  --color-or-profond: #1f5f78;
+
+  /* Textes */
+  --color-texte: var(--color-encre);
+  --color-texte-doux: var(--color-encre-2);
+  --color-texte-clair: var(--color-ecume);
+
+  /* Filets */
+  --color-ligne: #dde4e8;
+  --color-ligne-sombre: rgba(255, 255, 255, 0.12);
+
+  /* Jetons propres au parcours */
+  --color-ink: var(--color-atlantique);
+  --color-stone: var(--color-calcaire);
+  --color-brass: var(--color-calcaire);
+  --color-brass-sombre: var(--color-encre-2);
+  --color-bottle: var(--color-atlantique-2);
+  --color-laiton: var(--color-azur);
+  --color-laiton-texte: var(--color-encre-2);
+
+  /* Étiquettes énergie du résultat */
+  --color-dpe-a: #009b4a;
+  --color-dpe-b: #50b947;
+  --color-dpe-c: #c7d300;
+  --color-dpe-d: #ffec00;
+  --color-dpe-e: #fbb900;
+  --color-dpe-f: #eb6c1c;
+  --color-dpe-g: #e2001a;
+  --color-ges-a: #a4dbf8;
+  --color-ges-b: #8cb4d3;
+  --color-ges-c: #7792b1;
+  --color-ges-d: #5d6d8e;
+  --color-ges-e: #4d5272;
+  --color-ges-f: #393551;
+  --color-ges-g: #291b35;
+
+  /* Arrondis — mêmes noms, mêmes valeurs : aucun angle droit */
+  --radius-pilule: 9999px;
+  --radius-badge: 9999px;
+  --radius-champ: 14px;
+  --radius-carte: 22px;
+  --radius-bloc: 24px;
+  --radius-image: 24px;
+  --radius-fenetre: 24px;
+  --radius-filtre: 28px;
+
+  /* Typographies : la paire de la maison remplace celles d'origine */
+  --font-hero: var(--font-cormorant), Georgia, serif;
+  --font-mono: var(--font-manrope), system-ui, sans-serif;
+  --font-grotesk: var(--font-manrope), system-ui, sans-serif;
+  --font-vision: var(--font-manrope), system-ui, sans-serif;
+
+  /* Tailles de titre */
+  --text-titre-xl: clamp(2.75rem, 6.4vw, 6rem);
+  --text-titre-xl--line-height: 1.02;
+  --text-titre-xl--letter-spacing: -0.02em;
+  --text-titre-lg: clamp(2.25rem, 4.6vw, 4.25rem);
+  --text-titre-lg--line-height: 1.06;
+  --text-titre-lg--letter-spacing: -0.015em;
+  --text-titre-md: clamp(1.85rem, 3.3vw, 3rem);
+  --text-titre-md--line-height: 1.1;
+  --text-titre-md--letter-spacing: -0.01em;
+  --text-titre-sm: clamp(1.4rem, 2.2vw, 1.9rem);
+  --text-titre-sm--line-height: 1.2;
+  --text-chapo: clamp(1.1rem, 1.5vw, 1.3rem);
+  --text-chapo--line-height: 1.7;
+  --text-display-xl: clamp(2.75rem, 7vw, 6rem);
+  --text-display-xl--line-height: 0.98;
+  --text-display-lg: clamp(2.25rem, 5vw, 4rem);
+  --text-display-lg--line-height: 1.02;
+  --text-display-md: clamp(1.75rem, 3.5vw, 2.75rem);
+  --text-display-md--line-height: 1.05;
+
+  --tracking-surtitre: 0.24em;
+  --tracking-micro: 0.18em;
+
+  --container-page: 82.5rem;
+  --container-lecture: 44rem;
+  --container-content: 1320px;
+
+  --spacing-section: clamp(5rem, 11vw, 10rem);
+
+  --ease-plan: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --shadow-carte: 0 1px 2px rgba(12, 46, 66, 0.04), 0 12px 32px -12px rgba(12, 46, 66, 0.14);
+  --shadow-flottante: 0 2px 6px rgba(12, 46, 66, 0.05), 0 26px 60px -24px rgba(12, 46, 66, 0.3);
+  --shadow-verre: 0 1px 1px rgba(255, 255, 255, 0.45) inset, 0 2px 8px rgba(12, 46, 66, 0.05),
+    0 20px 48px -22px rgba(12, 46, 66, 0.28);
+  --shadow-verre-sombre: 0 1px 1px rgba(255, 255, 255, 0.1) inset, 0 2px 10px rgba(0, 0, 0, 0.3),
+    0 28px 60px -26px rgba(0, 0, 0, 0.65);
+  --shadow-releve: 0 3px 10px rgba(12, 46, 66, 0.06), 0 34px 70px -28px rgba(12, 46, 66, 0.36);
+
+  /* Animations du parcours */
+  --animate-fade-up: fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-cta-breath: cta-breath 2.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-sparkle-shimmer: sparkle-shimmer 2.8s cubic-bezier(0.4, 0, 0.6, 1) 0.7s infinite;
+  --animate-border-spin: border-spin 4s linear infinite;
+  --animate-border-spin-slow: border-spin 6s linear infinite;
+  --animate-shine: shine 3.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  --animate-cta-pop: cta-pop 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+  --animate-figure-forming: figure-forming 2.3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-spark-twinkle: spark-twinkle 3.1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-flottement: flottement 7s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  --animate-brillance-or: brillance-or 5.5s linear infinite;
+  --animate-defile-boucle: defile-boucle var(--duree-defilement, 60s) linear infinite;
+  --animate-building-blink: building-blink 0.9s ease-in-out infinite;
+}
+
+@keyframes fade-up {
+  0% { opacity: 0; transform: translateY(16px); }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes cta-breath {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.65; }
+}
+@keyframes sparkle-shimmer {
+  0%, 100% { opacity: 0.72; }
+  50% { opacity: 1; }
+}
+@keyframes border-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes shine {
+  0%, 62% { transform: translateX(-160%) skewX(-14deg); }
+  100% { transform: translateX(360%) skewX(-14deg); }
+}
+@keyframes figure-forming {
+  0%, 100% { opacity: 0.5; transform: scaleX(0.97); }
+  50% { opacity: 0.92; transform: scaleX(1.03); }
+}
+@keyframes spark-twinkle {
+  0%, 100% { opacity: 0; transform: scale(0.55); }
+  50% { opacity: 1; transform: scale(1); }
+}
+@keyframes cta-pop {
+  0% { opacity: 0; transform: scale(0.94); }
+  60% { opacity: 1; transform: scale(1.02); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes flottement {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -7px, 0); }
+}
+@keyframes brillance-or {
+  0% { background-position: 200% 50%; }
+  100% { background-position: -200% 50%; }
+}
+@keyframes defile-boucle {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+@keyframes building-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}

@@ -1,0 +1,74 @@
+'use client'
+
+import { motion, useReducedMotion } from 'framer-motion'
+import { Check, PhoneCall, X } from 'lucide-react'
+import { CALLBACK_SLOTS } from '@/lib/estimation/donnees'
+import { EASE } from '@/lib/estimation/motion'
+
+/**
+ * Écran de confirmation final — remplace la conversation
+ * ([EstimationChatPanel](./EstimationChatPanel.jsx)) dans la colonne droite
+ * du split-screen une fois les informations recueillies. Contrairement à
+ * l'ancienne fenêtre modale, ce n'est qu'un panneau de plus sur le même
+ * écran : pas de fond assombri, pas de piège à focus, pas de navigation — le
+ * prix reste visible et se déflégère à côté, en colonne gauche
+ * ([EstimationResultStep](./EstimationResultStep.jsx)).
+ *
+ * Purement une confirmation d'interface : aucune donnée n'a été envoyée
+ * nulle part, `contact` ne vit que dans le state de la page. Le vrai envoi
+ * fera l'objet d'un lot séparé.
+ */
+export function EstimationResultConfirmation({ contact, onClose }) {
+  const reduce = useReducedMotion()
+  const slot = CALLBACK_SLOTS.find((s) => s.id === contact?.creneau)
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: reduce ? 0 : 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: reduce ? 0.2 : 0.4, ease: EASE }}
+      className="relative w-full"
+    >
+      <div className="panneau-verre relative flex h-[26rem] flex-col items-center justify-center overflow-hidden px-6 py-8 text-center sm:h-[32rem] sm:px-10 lg:h-[36rem]">
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Fermer et revenir à l’accueil"
+          className="absolute right-3 top-3 flex h-9 w-9 touch-manipulation items-center justify-center rounded-full text-ink/50 transition-colors hover:bg-ink/5 hover:text-ink"
+        >
+          <X className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
+        </button>
+
+        {/* Cercle vert clair : variante douce du badge de confirmation (fond
+            plein) utilisé ailleurs dans le parcours — l'écran final appelle
+            un ton plus apaisé qu'une simple étape validée. */}
+        <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-bottle/12">
+          <Check className="h-8 w-8 text-bottle" strokeWidth={2.5} aria-hidden="true" />
+        </span>
+
+        <h2 className="titre-etape mt-6 text-[1.5rem] leading-tight text-ink sm:text-[1.75rem]">
+          Merci {contact?.prenom}&nbsp;!
+        </h2>
+
+        <p className="mt-4 text-[1.08rem] leading-relaxed text-ink/70">
+          Votre demande a été enregistrée.
+        </p>
+        <p className="mt-1.5 text-[1rem] leading-relaxed text-ink/70">
+          Un expert vous contactera {slot?.phrase}.
+        </p>
+
+        {/* Substitut du bleu clair demandé — hors palette du site. Une teinte
+            Ink très légère lui correspond visuellement (froide, discrète)
+            sans introduire de couleur étrangère à la charte. */}
+        <div className="panneau-interne mt-7 flex max-w-sm items-start gap-3 px-5 py-4 text-left">
+          <PhoneCall className="mt-0.5 h-4 w-4 shrink-0 text-ink/60" strokeWidth={1.75} aria-hidden="true" />
+          <p className="text-[0.85rem] leading-relaxed text-ink/70">
+            <strong className="font-semibold text-ink">Prochaine étape&nbsp;:</strong> gardez votre
+            téléphone à portée de main, notre expert vous appellera pour discuter de votre projet
+            en détail.
+          </p>
+        </div>
+      </div>
+    </motion.div>
+  )
+}

@@ -92,21 +92,40 @@ la vidéo ne sont alors téléchargées.
 
 ## Moteur d'estimation
 
-La page `/estimation` est un écran d'attente. Le point de montage est balisé
-dans `app/estimation/page.tsx` :
+La page `/estimation` porte le parcours complet : adresse, repérage du bâtiment
+sur photo aérienne IGN, saisie de l'étage et de la surface, analyse, fourchette
+de prix, puis récupération du contact.
 
-```tsx
-<div id="moteur-estimation" />
-```
+| Où | Quoi |
+| --- | --- |
+| `components/estimation/` | le parcours (panneaux, carte Leaflet, décor 3D) |
+| `lib/estimation/` | la logique, dont `serveur/` qui porte le calcul |
+| `app/api/estimation/` | la route appelée par le parcours |
+| `app/api/monaco-adresses/` | recherche d'adresses monégasques, utilisée par le moteur |
 
-Le bloc d'attente qui le précède est à remplacer par le composant du moteur.
+**Aucune clé d'API n'est nécessaire** : le moteur interroge des services
+publics ouverts — Base Adresse Nationale, Géoplateforme IGN, BDNB et DVF. Les
+deux variables facultatives sont décrites dans [.env.example](.env.example).
+
+Le calcul n'a pas été touché : aucun coefficient n'a bougé. Pour recaler les
+prix sur un secteur, la variable `ESTIMATION_PRIX_M2` est prévue pour cela et
+se règle sans modifier le code.
+
+L'habillage passe par un **pont de jetons** en fin de `app/globals.css` : les
+composants gardent leurs classes d'origine (`bg-ink`, `text-brass`,
+`rounded-carte`…), et ces noms sont redéfinis vers la palette et les
+typographies de la maison. Rien n'a été réécrit dans leur balisage.
 
 ## Formulaires
 
-Les formulaires de contact et de demande de visite **ne sont reliés à aucun
-envoi**. Ils valident la saisie et affichent une confirmation à l'écran. Le
-traitement se branche dans `components/formulaire-contact.tsx`, fonction
-`soumettre`.
+Les formulaires **ne sont reliés à aucun envoi**. Ils valident la saisie et
+affichent une confirmation à l'écran.
+
+- Contact et demande de visite : `components/formulaire-contact.tsx`,
+  fonction `soumettre`.
+- Récupération du contact en fin d'estimation : `lib/formulaires.ts`,
+  fonction `soumettreFormulaire` — point unique à brancher, documenté en tête
+  de fichier.
 
 ## Direction artistique
 
@@ -132,8 +151,11 @@ app/
   contact/ estimation/
   globals.css           système de design
   fonts/                WOFF2 auto-hébergés
+  api/                  routes du moteur d'estimation
 components/             en-tête, héro, cartes, galerie, filtres, formulaires…
+  estimation/           le parcours d'estimation
 lib/                    données et mise en forme
+  estimation/           la logique du moteur
 public/
   images/               67 photographies Unsplash
   intro/                séquence de l'intro au défilement

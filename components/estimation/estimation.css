@@ -1,0 +1,598 @@
+@reference "../../app/globals.css";
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Parcours d'estimation — feuille de styles du moteur, reprise telle quelle.
+
+   Deux seules adaptations : les polices passent par les variables de la paire
+   de cette maison (Cormorant Garamond et Manrope), et la directive @reference
+   ci-dessus donne à @apply accès au thème, Tailwind 4 traitant chaque feuille
+   séparément.
+
+   Les couleurs, elles, n'ont pas eu à être touchées : les jetons `ink`,
+   `laiton`, `brass`, `stone`… sont redéfinis aux couleurs du site dans
+   app/globals.css (voir « pont de jetons »).
+   ───────────────────────────────────────────────────────────────────────── */
+
+
+  /* Titres d'étape du parcours d'estimation — de « Où se situe votre bien ? »
+     jusqu'à la confirmation finale.
+
+     Ils reviennent à la Fraunces du reste du site, en 600 : c'est la serif des
+     titres de la maquette de référence du tunnel (voir `DroneScene`), et le
+     panneau de verre n'en connaît que deux — celle-ci pour les titres, la Space
+     Grotesk pour tout le reste (voir `.tunnel-estimation` ci-dessous).
+
+     La Prata qui tenait ce rôle a été retirée, feuille de fontes comprise :
+     elle ne servait qu'ici.
+
+     La classe ne porte ni taille ni couleur : chaque écran garde les siennes. */
+  .titre-etape {
+    font-family: var(--font-cormorant), Georgia, serif;
+    font-weight: 600;
+    letter-spacing: 0;
+  }
+
+  /* ==========================================================================
+     PANNEAU DE VERRE DU TUNNEL « ESTIMER MON BIEN »
+     ==========================================================================
+
+     Tout ce bloc ne concerne QUE le parcours d'estimation : le panneau posé
+     devant la scène 3D (voir `src/components/estimation/DroneScene.jsx`), et
+     rien d'autre du site. Il reprend à l'identique l'habillage de la maquette
+     de référence — verre dépoli blanc cassé, coins arrondis, ombre douce,
+     accent laiton — de façon à ce qu'aucune étape n'en dévie : la règle est
+     écrite une fois ici, pas répétée par écran.
+
+     `.tunnel-estimation` est posé haut, sur le conteneur du parcours (voir
+     `src/pages/Estimer.jsx`) : il commande la sans-serif de tout ce qui est
+     texte courant et libellé à l'intérieur. Les titres, eux, gardent la
+     `.titre-etape` ci-dessus. */
+  .tunnel-estimation {
+    font-family: var(--font-manrope), system-ui, sans-serif;
+  }
+
+  /* Le parcours ne connaît que deux polices : la Fraunces des titres
+     (`.titre-etape`) et la Space Grotesk de tout le reste. Les étiquettes
+     techniques du site — celles en `font-mono`, réglées en IBM Plex Mono pour
+     le reste des pages — sont donc ramenées ici sur la Space Grotesk, et
+     gardent leur allure de légende : capitales, très espacées. Une règle de
+     portée plutôt que quinze remplacements de classe : c'est la règle du
+     parcours entier, elle s'écrit à un seul endroit.
+
+     L'interlettrage est repris un cran en dessous du `tracking-micro` du site :
+     0,18 em sur une grotesque, c'est le double de ce qu'il faut. */
+  .tunnel-estimation .font-mono {
+    font-family: var(--font-manrope), system-ui, sans-serif;
+    letter-spacing: 0.1em;
+  }
+
+  /* Le panneau lui-même — une vitre, pas un calque blanc.
+
+     LE FLOU EST L'ENNEMI. C'est lui qui décidait de tout dans les versions
+     précédentes : à 22 px, le bâtiment derrière devenait une tache colorée, et
+     on ne voyait plus que c'était une maison. Il tombe ici à 7 px — de quoi
+     adoucir le décor sans le dissoudre : la silhouette, le toit, l'ombre portée
+     restent lisibles au travers, et c'est tout l'objet du parcours.
+
+     CE QUI REND LE TEXTE LISIBLE, ce n'est donc plus l'opacité du fond — qui
+     descend à 0,20-0,42 selon l'endroit de la vitre — mais trois choses qui ne
+     coûtent rien à la transparence :
+
+     1. `brightness(1.07) contrast(0.96)` sur ce qui passe derrière : un coup de
+        pouce, pas un lavage. Les tons sombres du décor remontent juste assez
+        pour que le texte noir tienne, et la scène garde ses valeurs — poussé
+        plus haut (on a essayé 1,18), le verre blanchit tout et la maison
+        disparaît, ce qui est exactement le défaut qu'on cherche à éviter.
+     2. La saturation relevée de moitié, qui rend au décor la couleur que le
+        flou lui prend.
+     3. Un halo blanc très court sous chaque lettre (voir `text-shadow` plus
+        bas) : c'est le détourage qui tient la lecture quand une arête sombre
+        passe juste derrière un mot.
+
+     LES REFLETS (`::before`) font le reste, et ce ne sont pas des ornements :
+     deux bandes de lumière rasante, l'une en haut à gauche, l'autre au coin
+     opposé, qui donnent à la plaque son épaisseur et son inclinaison. Sans
+     elles, une surface aussi transparente ne se lit plus comme du verre mais
+     comme un trou dans l'écran. */
+  /* LE VERRE S'EST OPACIFIÉ D'UN CRAN. Le fond passait de 42 % à 20 % de blanc
+     selon l'endroit de la plaque, et le texte se lisait par-dessus un chantier
+     en mouvement : au-dessus d'une façade sombre ou d'un arbre, il fallait s'y
+     reprendre. Il monte à 62 %–45 %, et le flou de deux tiers de pixel de plus.
+     La plaque reste du verre — on voit toujours le bien à travers, et c'était
+     tout l'objet — mais elle en est un plus épais. */
+  .panneau-verre {
+    position: relative;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.62) 0%,
+      rgba(255, 255, 255, 0.48) 38%,
+      rgba(255, 255, 255, 0.45) 64%,
+      rgba(255, 255, 255, 0.57) 100%
+    );
+    backdrop-filter: blur(10px) saturate(1.35) brightness(1.06) contrast(0.97);
+    -webkit-backdrop-filter: blur(10px) saturate(1.35) brightness(1.06) contrast(0.97);
+    border: 1px solid rgba(255, 255, 255, 0.62);
+    border-radius: 14px;
+    box-shadow:
+      0 22px 55px rgba(20, 20, 20, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.95),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.4);
+    /* Détourage de lecture : un blanc très court, jamais un halo visible. */
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.72);
+  }
+
+  /* Les reflets. Posés au-dessus du fond mais sous le contenu, et transparents
+     au clic — c'est de la lumière, pas une surface. */
+  .panneau-verre::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+      linear-gradient(
+        118deg,
+        rgba(255, 255, 255, 0.7) 0%,
+        rgba(255, 255, 255, 0.22) 11%,
+        rgba(255, 255, 255, 0) 27%
+      ),
+      linear-gradient(
+        300deg,
+        rgba(255, 255, 255, 0.4) 0%,
+        rgba(255, 255, 255, 0.08) 9%,
+        rgba(255, 255, 255, 0) 24%
+      );
+  }
+
+  /* Le contenu repasse devant les reflets. */
+  .panneau-verre > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Sur fond sombre — bouton d'action, bulle de réponse, pastille —, le
+     détourage blanc n'a rien à détourer : il ne ferait que baver. */
+  .panneau-verre .text-white,
+  .panneau-verre .bouton-tunnel {
+    text-shadow: none;
+  }
+
+  /* LE MONTANT DE L'ESTIMATION — et le seul texte du site dont la taille se
+     règle sur son contenant plutôt que sur la fenêtre.
+
+     CE QUI NE MARCHAIT PAS. Le montant était posé à une taille fixe
+     (6,5 rem sur ordinateur), choisie à l'œil sur un prix à six chiffres. Elle
+     ne tenait dans la carte pour aucun d'entre eux : « 390 000 € » y mesurait
+     461 px de large pour 374 px de place, si bien que le premier chiffre
+     débordait à gauche, le symbole € se faisait couper à droite, et le flou —
+     qui déborde du glyphe de plusieurs dizaines de pixels — était rogné net par
+     l'`overflow-hidden` de la carte. Sur téléphone, le même calcul donnait
+     301 px pour 231 px de place.
+
+     CE QUI LE REMPLACE. La carte devient un CONTENEUR DE REQUÊTE
+     (`container-type: inline-size`), et la taille du montant se déduit de sa
+     largeur : `100cqw` divisé par la largeur du texte exprimée en cadratins.
+     Cette largeur-là, seul l'appelant la connaît — elle dépend du nombre de
+     chiffres — et il la passe en `--montant-largeur` (voir `PriceReveal`).
+     `--montant-max` garde la taille d'origine comme plafond : sur un écran
+     assez large, rien n'a changé ; partout ailleurs, le montant se pose à la
+     taille qui tient.
+
+     LE RETRAIT LATÉRAL EST LA PLACE DU FLOU, pas une marge d'esthétique. Sans
+     lui, le montant tiendrait tout juste et son flou repartirait déborder. */
+  .montant-cadre {
+    container-type: inline-size;
+    padding-inline: 0.75rem;
+  }
+
+  @media (min-width: 640px) {
+    .montant-cadre {
+      padding-inline: 1.25rem;
+    }
+  }
+
+  .montant {
+    font-size: clamp(
+      1.75rem,
+      calc(100cqw / var(--montant-largeur, 5)),
+      var(--montant-max, 4rem)
+    );
+  }
+
+  /* Variante sans flou, pour les blocs posés À L'INTÉRIEUR d'un panneau (carte
+     de fourchette, encart d'attente) : deux flous empilés se voient, et le
+     second n'a de toute façon rien à flouter. */
+  .panneau-interne {
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.52) 0%,
+      rgba(255, 255, 255, 0.34) 100%
+    );
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    border-radius: 10px;
+  }
+
+  /* Bouton d'avancement — « Continuer », « Obtenir une estimation »… Anthracite
+     plein, texte blanc, coins à peine arrondis. */
+  .bouton-tunnel {
+    @apply touch-manipulation bg-ink text-white transition-colors duration-200;
+    border-radius: 8px;
+  }
+
+  .bouton-tunnel:hover {
+    background: #28292A;
+  }
+
+  .bouton-tunnel:disabled {
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  /* LA BANDE LUMINEUSE — une lueur qui tourne autour d'un bouton.
+
+     Elle ne sert qu'à un seul bouton de tout le site : « Affiner mon
+     estimation ». C'est la dernière action du parcours, la seule qui change
+     encore le montant, et elle arrivait sous une carte de fourchette dans le
+     même anthracite que tous les autres boutons — beaucoup passaient à côté.
+
+     COMMENT C'EST FAIT, et pourquoi pas autrement. Le cadre est un conteneur
+     d'un pixel et demi de padding, garni d'un dégradé CONIQUE qui tourne : le
+     bouton, opaque, le recouvre entièrement sauf sur ce liseré. Il n'y a donc
+     ni ombre animée ni filtre — une seule rotation de dégradé, composée par le
+     processeur graphique, qui ne relayoute rien et ne repeint rien d'autre.
+
+     Le dégradé est à quatre arrêts et non deux : une lueur qui reste allumée
+     sur tout le tour est un simple liseré doré. C'est le fait qu'elle
+     s'ÉTEIGNE sur les trois quarts du tour qui la fait lire comme une bande
+     qui passe — et c'est aussi ce qui l'empêche de crier.
+
+     Les deux laitons sont ceux du montant : `#C9A16B` pour le corps de la
+     bande, `#8A6224` — la teinte exacte du prix sur le blanc — pour son cœur. */
+  .bande-lumineuse {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border-radius: 11px;
+    /* Trois pixels, et pas un de moins : c'est l'épaisseur à laquelle une
+       bande se VOIT. À un pixel et demi, elle existait dans la feuille de
+       style et nulle part ailleurs. */
+    padding: 3px;
+    /* Un halo court sous le bouton : ce que la bande éclaire autour d'elle.
+       Sans lui, la lueur s'arrête net sur le bord du cadre. */
+    box-shadow: 0 0 22px rgba(204, 164, 73, 0.42);
+  }
+
+  .bande-lumineuse::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    /* Un carré plus grand que le bouton dans les deux sens : un dégradé
+       conique tourne autour de SON centre, et il doit couvrir les quatre coins
+       du cadre à tout moment de sa rotation. */
+    width: 280%;
+    aspect-ratio: 1;
+    translate: -50% -50%;
+    background: conic-gradient(
+      from 0turn,
+      rgba(204, 164, 73, 0.16) 0turn,
+      rgba(204, 164, 73, 1) 0.09turn,
+      rgba(236, 214, 160, 1) 0.13turn,
+      rgba(125, 97, 29, 1) 0.18turn,
+      rgba(204, 164, 73, 0.16) 0.3turn,
+      rgba(204, 164, 73, 0.16) 1turn
+    );
+    animation: bande-tourne 3.4s linear infinite;
+  }
+
+  /* Le bouton repasse devant la bande — il n'en laisse voir que le liseré. */
+  .bande-lumineuse > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  @keyframes bande-tourne {
+    to {
+      rotate: 1turn;
+    }
+  }
+
+  /* MOINS D'ANIMATIONS : la bande se fige en un liseré laiton plein. Elle
+     continue de désigner le bouton — c'est tout ce qu'on lui demande — sans
+     rien mettre en mouvement. */
+  @media (prefers-reduced-motion: reduce) {
+    .bande-lumineuse::before {
+      animation: none;
+      background: theme('colors.laiton');
+    }
+  }
+
+  /* Option ou créneau proposé au choix : filet discret au repos, laiton dès
+     qu'il est survolé, laiton plein une fois retenu. */
+  .option-tunnel {
+    @apply touch-manipulation text-ink transition-colors duration-200;
+    border: 1px solid rgba(11, 11, 11, 0.14);
+    border-radius: 10px;
+    background: rgba(11, 11, 11, 0.02);
+  }
+
+  .option-tunnel:hover {
+    border-color: rgba(204, 164, 73, 0.7);
+    background: rgba(204, 164, 73, 0.1);
+  }
+
+  .option-tunnel[aria-pressed='true'],
+  .option-tunnel.est-retenue {
+    border-color: theme('colors.laiton');
+    background: rgba(204, 164, 73, 0.16);
+    color: theme('colors.laiton-texte');
+  }
+
+  /* Champ de saisie : le filet passe au laiton à la prise de focus — c'est le
+     seul signal, il n'y a pas d'anneau par-dessus. */
+  .champ-tunnel {
+    @apply w-full bg-white/45 text-ink outline-none transition-colors duration-200 placeholder:text-ink/50;
+    border: 1px solid rgba(11, 11, 11, 0.18);
+    border-radius: 8px;
+  }
+
+  .champ-tunnel:focus,
+  .champ-tunnel:focus-within {
+    border-color: theme('colors.laiton');
+  }
+
+  /* Rail d'étapes, sur le flanc droit de l'écran : gris clair pour ce qui
+     vient, laiton pour ce qui est franchi, anthracite agrandi pour l'étape en
+     cours. Purement indicatif — la navigation se fait par les boutons du
+     panneau, jamais en cliquant un point.
+
+     Le calage vertical n'est pas ici : le rail est posé par la page, dans le
+     même calque collant que le décor, de façon à ne pas déborder sur le pied
+     de page (voir `src/pages/Estimer.jsx`). */
+  .rail-etapes {
+    @apply pointer-events-none flex flex-col gap-2.5;
+    margin-right: max(0px, env(safe-area-inset-right));
+  }
+
+  .rail-point {
+    height: 7px;
+    width: 7px;
+    border-radius: 50%;
+    background: rgba(11, 11, 11, 0.22);
+    transition: background 0.3s ease, transform 0.3s ease;
+  }
+
+  .rail-point.est-franchie {
+    background: theme('colors.laiton');
+  }
+
+  .rail-point.est-courante {
+    background: theme('colors.ink');
+    transform: scale(1.5);
+  }
+
+  /* Étiquette technique (kicker) — mono, espacée, façon légende de plan. */
+
+
+
+
+  /* Curseur de surface de la fenêtre d'estimation.
+
+     L'apparence d'un `input[type=range]` ne se pilote qu'en pseudo-éléments,
+     hors de portée des utilitaires Tailwind — d'où ces règles écrites à la
+     main. Le composant natif est conservé plutôt que réécrit en JavaScript :
+     lui seul apporte le suivi tactile du système, le clavier et le rôle ARIA
+     sans une ligne de code, et sans le décrochage au doigt d'un glissement
+     reconstitué à la main.
+
+     Habillage de la maquette de référence : une fine ligne grise, un point
+     laiton qui glisse dessus, et un halo laiton qui s'élargit au survol. La
+     piste n'a plus de part remplie — c'est le point seul qui dit où l'on en
+     est, et le chiffre au-dessus qui dit quoi.
+
+     Le point est dessiné à 1 rem plutôt qu'aux 14 px de la maquette : il est
+     pris au pouce sur un téléphone, et son halo porte la cible à 1,6 rem sans
+     l'alourdir à l'œil. L'élément, lui, garde ses 2,75 rem de haut — c'est la
+     hauteur de préhension, pas celle du dessin. */
+  .surface-slider {
+    @apply h-11 w-full cursor-pointer touch-manipulation bg-transparent align-middle;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .surface-slider::-webkit-slider-runnable-track {
+    height: 2px;
+    border-radius: 2px;
+    background: rgba(11, 11, 11, 0.18);
+  }
+
+  .surface-slider::-moz-range-track {
+    height: 2px;
+    border-radius: 2px;
+    background: rgba(11, 11, 11, 0.18);
+  }
+
+  .surface-slider::-webkit-slider-thumb {
+    @apply h-4 w-4 rounded-full bg-laiton;
+    -webkit-appearance: none;
+    appearance: none;
+    box-shadow: 0 0 0 4px rgba(204, 164, 73, 0.2);
+    transition: box-shadow 0.25s ease;
+    /* Recentre le point sur la piste : (1 rem − 2 px) ÷ 2. */
+    margin-top: -0.4375rem;
+  }
+
+  .surface-slider::-moz-range-thumb {
+    @apply h-4 w-4 rounded-full border-0 bg-laiton;
+    box-sizing: border-box;
+    box-shadow: 0 0 0 4px rgba(204, 164, 73, 0.2);
+    transition: box-shadow 0.25s ease;
+  }
+
+  .surface-slider:hover::-webkit-slider-thumb,
+  .surface-slider:active::-webkit-slider-thumb {
+    box-shadow: 0 0 0 7px rgba(204, 164, 73, 0.28);
+  }
+
+  .surface-slider:hover::-moz-range-thumb,
+  .surface-slider:active::-moz-range-thumb {
+    box-shadow: 0 0 0 7px rgba(204, 164, 73, 0.28);
+  }
+
+  .surface-slider:focus-visible {
+    outline: none;
+  }
+
+  .surface-slider:focus-visible::-webkit-slider-thumb {
+    box-shadow: 0 0 0 7px rgba(204, 164, 73, 0.45);
+  }
+
+  .surface-slider:focus-visible::-moz-range-thumb {
+    box-shadow: 0 0 0 7px rgba(204, 164, 73, 0.45);
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Voile Ink Navy pour unifier les visuels photographiques. */
+  .veil::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(16, 20, 28, 0.15) 0%,
+      rgba(16, 20, 28, 0.35) 45%,
+      rgba(16, 20, 28, 0.85) 100%
+    );
+    pointer-events: none;
+  }
+/* Carte Leaflet — hors de tout `@layer`, à dessein.
+   Tailwind élague les règles d'un layer dont les classes n'apparaissent pas
+   dans les fichiers scannés ; or `.leaflet-*` est posé par la librairie à
+   l'exécution, jamais dans le JSX. En CSS de premier niveau, ces règles sont
+   émises telles quelles.
+   La classe racine est doublée pour la même raison de charge : `leaflet.css`
+   arrive avec le module carte, donc après cette feuille, et l'emporterait à
+   spécificité égale. */
+
+/* Le fond compte plus qu'il n'y paraît : les dalles se joignent sur des
+   positions sous-pixel et laissent filtrer un liseré. Sombre, il se fond dans
+   la photo aérienne ; le gris clair d'origine y dessinait une grille. */
+.leaflet-container.leaflet-container {
+  @apply bg-ink font-sans;
+}
+
+/* Contrôles de zoom ramenés dans la charte, plutôt qu'un bouton « par défaut »
+   au milieu d'une page dessinée. */
+.leaflet-container.leaflet-container .leaflet-control-zoom {
+  @apply overflow-hidden rounded-lg border-none shadow-lg shadow-ink/30;
+}
+
+.leaflet-container.leaflet-container .leaflet-control-zoom a {
+  @apply border-none bg-ink/85 font-sans text-lg text-stone/80 backdrop-blur-sm transition-colors;
+  width: 1.9rem;
+  height: 1.9rem;
+  line-height: 1.9rem;
+}
+
+.leaflet-container.leaflet-container .leaflet-control-zoom a:hover {
+  @apply bg-ink text-brass;
+}
+
+.leaflet-container.leaflet-container .leaflet-control-zoom a.leaflet-disabled {
+  @apply bg-ink/60 text-stone/25;
+}
+
+/* Les emprises bâties sont des `<path>` rendus focusables : l'anneau doré
+   global s'y applique mal, un halo qui épouse le tracé se lit mieux sur une
+   photo aérienne. */
+.leaflet-container.leaflet-container path.leaflet-interactive:focus-visible {
+  outline: none;
+  filter: drop-shadow(0 0 3px theme('colors.brass'));
+}
+
+/* Marqueur d'adresse de la carte d'estimation — logo de l'agence au-dessus
+   d'une goutte de localisation. Hors `@layer` et écrit à la main pour la même
+   raison que les règles Leaflet ci-dessus : ce balisage est posé par un
+   `divIcon` à l'exécution (voir `marqueurAdresse` dans `BuildingMap.jsx`), il
+   n'apparaît dans aucun fichier scanné par Tailwind. */
+/* Sélecteur doublé de la classe de Leaflet, et pas seulement `.imv-marqueur` :
+   `leaflet.css` pose `display: block` sur `.leaflet-marker-icon`, à égalité de
+   spécificité et chargée après la feuille de l'application — c'est donc elle
+   qui l'emportait. Le marqueur retombait en bloc : le logo, dont la plaque est
+   elle-même un conteneur flexible, restait centré, mais la goutte se calait à
+   gauche de la boîte. D'où un ensemble qui paraissait décentré vers la droite,
+   et surtout une pointe qui ne tombait pas sur la coordonnée. */
+.leaflet-marker-icon.imv-marqueur {
+  /* `divIcon` arrive avec un fond blanc et une bordure par défaut : remis à
+     zéro, sans quoi le marqueur serait un carré blanc sur la photo. */
+  background: none;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Le contenu est calé par le bas : la pointe de la goutte doit tomber sur la
+     coordonnée, et le moindre jeu laissé sous elle l'en écarterait d'autant. */
+  justify-content: flex-end;
+  gap: 0.3rem;
+}
+
+/* Le logo est posé à même la photo, sans plaque derrière lui. Il est blanc, et
+   une orthophoto n'a aucune couleur garantie dessous : ce sont trois ombres
+   portées qui s'en chargent désormais — une au ras des lettres, une courte qui
+   le détache, une plus diffuse qui assombrit le fond alentour. Un cerne, donc,
+   là où il y avait un rectangle sombre. */
+.imv-marqueur__logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 0 1px rgba(16, 20, 28, 1)) drop-shadow(0 1px 2px rgba(16, 20, 28, 0.95))
+    drop-shadow(0 0 7px rgba(16, 20, 28, 0.85));
+}
+
+.imv-marqueur__logo img {
+  display: block;
+  /* L'inscription se lit sans avoir à couvrir la toiture qu'elle désigne : la
+     goutte, juste dessous, porte déjà le repérage. */
+  height: 0.85rem;
+  width: auto;
+}
+
+/* La goutte : remplie en Ink pour rester lisible sur les toitures claires,
+   cernée d'or clair pour les fonds sombres — aucun des deux ne suffit seul sur
+   une orthophoto, dont on ne maîtrise pas ce qu'il y a dessous.
+   Réduite de 30 % : elle désigne le bien, elle n'a pas à le recouvrir. */
+.imv-marqueur__pin {
+  width: 1.925rem;
+  height: 2.66rem;
+  filter: drop-shadow(0 3px 7px rgba(16, 20, 28, 0.7));
+}
+
+.imv-marqueur__pin path {
+  fill: #10141c;
+  stroke: #f5e3bc;
+  stroke-width: 2.2;
+}
+
+.imv-marqueur__pin circle {
+  fill: #b08d57;
+}
+
+/* Respect strict de prefers-reduced-motion (filet de sécurité côté CSS ;
+   les animations Framer Motion sont par ailleurs neutralisées via useReducedMotion). */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
