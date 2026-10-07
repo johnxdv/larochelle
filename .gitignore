@@ -35,6 +35,9 @@ yarn-error.log*
 # …sauf le modèle, qui documente les variables du moteur d'estimation.
 !.env.example
 
+# matériel source, gardé en local seulement (vidéo d'origine de l'intro…)
+/reference/
+
 # vercel
 .vercel
 
