@@ -428,8 +428,8 @@ export function EstimationResultStep({
                   Le montant exact
                 </p>
                 <p className="mx-auto mt-2 max-w-sm text-[0.85rem] leading-relaxed text-ink/75">
-                  Un expert finalise l’estimation de votre bien et vous rappelle
-                  au créneau que vous avez choisi.
+                  Votre conseiller vous communique l’estimation complète et sa
+                  fourchette lors de son appel.
                 </p>
               </div>
             </motion.div>
