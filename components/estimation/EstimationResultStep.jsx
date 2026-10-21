@@ -5,12 +5,6 @@ import { motion, useReducedMotion } from 'framer-motion'
 import { Check, MapPin, SlidersHorizontal } from 'lucide-react'
 import { StepBackLink } from './StepBackLink'
 import { PriceReveal } from './PriceReveal'
-import {
-  chiffresReveles,
-  composerMontant,
-  compterChiffres,
-  tirerLeurres,
-} from './montant-masque'
 import { EstimationChatPanel, QUESTION_COUNT } from './EstimationChatPanel'
 import { EstimationResultConfirmation } from './EstimationResultConfirmation'
 import { EstimationAffinagePanel } from './EstimationAffinagePanel'
@@ -23,26 +17,22 @@ import { EASE } from '@/lib/estimation/motion'
  * coordonnées n'ont pas été renseignées.
  *
  * Trois temps sur le même écran, sans navigation entre eux :
- * 1. **Repos** — panneau centré, montant entièrement masqué, CTA « Recevoir
- *    mon estimation ». Volontairement dépouillé : ni rappel d'adresse, ni
- *    promesse d'expertise — les deux reparaissent à l'écran suivant, et la
- *    place rendue va au bien qui s'achève derrière la vitre.
+ * 1. **Repos** — panneau centré, prix flouté (déjà avec son premier chiffre
+ *    net), CTA « Voir mon estimation ». Volontairement dépouillé : ni rappel
+ *    d'adresse, ni promesse d'expertise — les deux reparaissent à l'écran
+ *    suivant, et la place rendue va au bien qui s'achève derrière la vitre.
  * 2. **Conversation** — au clic sur ce CTA, l'écran bascule en deux colonnes :
- *    le montant à gauche, dont la FIN se dévoile d'un chiffre à chaque réponse,
- *    la conversation de capture à droite, agrandie.
- * 3. **Confirmation** — une fois les informations recueillies, la conversation
- *    cède la place à l'écran de remerciement, toujours sur ce même écran. Le
- *    montant, lui, ne s'ouvre pas davantage : ses premiers chiffres restent
- *    masqués, et le conseiller le communique lors du rappel.
+ *    le prix à gauche (toujours visible, qui se déflégère très légèrement à
+ *    mesure des réponses), la conversation de capture à droite, agrandie.
+ * 3. **Confirmation** — une fois les informations recueillies, le prix se
+ *    déflégère intégralement en colonne gauche pendant que la conversation,
+ *    en colonne droite, cède la place à l'écran de remerciement — toujours
+ *    sur ce même écran, jamais de redirection.
  *
- * LE VISITEUR NE VOIT JAMAIS LE MONTANT COMPLET, ni avant ni après avoir
- * laissé ses coordonnées. Et le flou n'en est pas le gardien : les chiffres
- * encore masqués ne descendent pas dans la page. Ils sont remplacés, avant le
- * rendu, par des leurres tirés au hasard — voir `montant-masque.js`. Lire le
- * DOM ne rend donc rien.
- *
- * Le calcul, lui, n'est pas concerné : la demande envoyée au conseiller porte
- * le vrai prix et la vraie fourchette (voir `finishChat` dans Estimer.jsx).
+ * Le floutage est ici purement visuel : le montant affiché est une valeur de
+ * démonstration, et le vrai calcul n'est pas branché. Le jour où il le sera,
+ * le montant ne devra plus descendre dans la page avant la capture des
+ * coordonnées — un flou CSS se contourne en trois clics dans un inspecteur.
  *
  * `onProgress` remonte l'avancement local (0 avant le clic sur le CTA, la
  * fraction de conversation complétée, puis 1 une fois la confirmation
@@ -122,21 +112,8 @@ export function EstimationResultStep({
     [affine, estimation, options, contexteAffinage],
   )
   const price = estimationAffinee?.price ?? null
-  const formatted = formatEuros(price) ?? '— €'
+  const formatted = formatEuros(price)
   const finished = contact !== null
-
-  // ── Masquage du montant ────────────────────────────────────────────────
-  // Les chiffres encore cachés ne doivent pas exister dans la page. On tire
-  // un leurre par position, une fois par montant, et on ne compose que les
-  // chiffres autorisés : ce qui descend dans le DOM, c'est cette chaîne-là.
-  const nombreChiffres = compterChiffres(formatted)
-  const leurres = useMemo(() => tirerLeurres(nombreChiffres), [formatted, nombreChiffres])
-  // La fin de la conversation ne déverrouille rien de plus : le dévoilement
-  // suit les seules questions répondues, et plafonne à mi-montant.
-  const reveles = chiffresReveles(revealStage, nombreChiffres)
-  const montantMasque = composerMontant(formatted, leurres, reveles)
-  // Aucun chiffre net au repos : le montant est intégralement couvert.
-  const montantCouvert = composerMontant(formatted, leurres, 0)
   // La fourchette n'existe qu'à la révélation finale : elle s'affiche dans une
   // carte à part, sous le montant, jamais avant que celui-ci ne soit
   // intégralement net.
@@ -152,9 +129,10 @@ export function EstimationResultStep({
   // relative de la bande reçue et la réapplique au nouveau prix central (voir
   // `affinerEstimation`), si bien que la fourchette reste celle du serveur en
   // pourcentage, et ne bouge qu'avec le montant qu'elle encadre.
-  // La fourchette n'est plus affichée du tout : bornes basse et haute
-  // encadrent le montant d'assez près pour le livrer. Elle part dans la
-  // demande au conseiller, qui la donne de vive voix.
+  const range = finished && estimationAffinee?.low && estimationAffinee?.high
+    ? { low: estimationAffinee.low, high: estimationAffinee.high }
+    : null
+  const showRange = range != null
 
   useEffect(() => {
     onProgress?.(finished ? 1 : started ? revealStage / QUESTION_COUNT : 0)
@@ -267,12 +245,9 @@ export function EstimationResultStep({
           <span className="font-mono text-[0.56rem] uppercase tracking-micro text-ink/55">
             Estimation
           </span>
-          <PriceReveal
-            caracteres={montantMasque}
-            reveles={reveles}
-            tailleMax="1.45rem"
-            className="montant titre-etape whitespace-nowrap leading-none text-laiton-texte"
-          />
+          <span className="titre-etape whitespace-nowrap text-[1.45rem] leading-none text-laiton-texte tabular-nums">
+            {formatted ?? '— €'}
+          </span>
         </motion.div>
 
         <EstimationAffinagePanel
@@ -317,13 +292,13 @@ export function EstimationResultStep({
               </p>
 
               {/* Le montant domine délibérément l'écran — au point d'aiguiser la
-                  curiosité plutôt que de simplement l'informer. Aucun chiffre
-                  n'est net ici : seule la fin du nombre se dévoilera, au fil
-                  de la conversation qui suit. */}
+                  curiosité plutôt que de simplement l'informer. Le premier
+                  chiffre est net dès cet écran ; le reste se déflégera très
+                  progressivement au fil de la conversation qui suit. */}
               <div className="montant-cadre mt-5 flex items-center justify-center">
                 <PriceReveal
-                  caracteres={montantCouvert}
-                  reveles={0}
+                  formatted={formatted ?? '— €'}
+                  revealStage={0}
                   tailleMax="6.5rem"
                   className="montant titre-etape whitespace-nowrap leading-none text-laiton-texte"
                 />
@@ -343,7 +318,7 @@ export function EstimationResultStep({
                   vitre — c'est le dernier stade du chantier, il mérite mieux
                   qu'un bandeau de texte par-dessus. */}
               <p className="mt-7 text-lg font-semibold text-ink sm:text-xl">
-                Un conseiller vous communique le montant
+                Résultats détaillés disponibles
               </p>
 
               <div className="mx-auto mt-7 max-w-[17rem]">
@@ -353,7 +328,7 @@ export function EstimationResultStep({
                   className="bouton-tunnel flex w-full items-center justify-center px-6 py-4"
                 >
                   <span className="text-[0.88rem] font-semibold uppercase tracking-[0.08em]">
-                    Recevoir mon estimation
+                    Voir mon estimation
                   </span>
                 </button>
               </div>
@@ -387,8 +362,8 @@ export function EstimationResultStep({
 
               <div className="montant-cadre mt-4 flex items-center justify-center">
                 <PriceReveal
-                  caracteres={montantMasque}
-                  reveles={reveles}
+                  formatted={formatted ?? '— €'}
+                  revealStage={finished ? 5 : revealStage}
                   tailleMax="3.5rem"
                   className="montant titre-etape whitespace-nowrap leading-none text-laiton-texte"
                 />
@@ -405,32 +380,46 @@ export function EstimationResultStep({
 
               {!finished && (
                 <p className="mx-auto mt-5 max-w-xs text-[0.75rem] leading-relaxed text-ink/70">
-                  Un expert finalise votre étude et vous communique le montant
-                  exact lors de son appel.
+                  Un expert va finaliser votre étude et vous présenter les meilleures options
+                  pour votre projet.
                 </p>
               )}
             </div>
           </div>
 
-          {/* La fourchette ne paraît plus ici. Basse et haute encadrent le
-              montant d'assez près pour le livrer : les afficher reviendrait à
-              défaire ce que le masquage protège. Elles partent au conseiller,
-              qui les donne de vive voix. */}
-          {finished && (
+          {/* Carte distincte, sous le montant : elle n'apparaît qu'une fois
+              l'estimation intégralement défloutée, en fondu montant accordé au
+              reste des transitions de l'écran. */}
+          {showRange && (
             <motion.div
               initial={{ opacity: 0, y: reduce ? 0 : 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: reduce ? 0.2 : 0.5, ease: EASE }}
               className="mt-4"
             >
-              <div className="panneau-verre px-5 py-5 text-center sm:px-6">
-                <p className="font-mono text-[0.58rem] uppercase tracking-micro text-ink/55">
-                  Le montant exact
-                </p>
-                <p className="mx-auto mt-2 max-w-sm text-[0.85rem] leading-relaxed text-ink/75">
-                  Votre conseiller vous communique l’estimation complète et sa
-                  fourchette lors de son appel.
-                </p>
+              <div className="panneau-verre px-4 py-5 sm:px-6">
+                {/* Les deux bornes restent côte à côte jusqu'aux plus petits
+                    écrans : les montants passent à une taille légèrement
+                    réduite en dessous de 640 px plutôt que de s'empiler. */}
+                <div className="grid grid-cols-2 divide-x divide-ink/10">
+                  <div className="px-2 text-center">
+                    <p className="font-mono text-[0.58rem] uppercase tracking-micro text-ink/55">
+                      Estimation basse
+                    </p>
+                    <p className="titre-etape mt-2 whitespace-nowrap text-[1.25rem] leading-none text-ink sm:text-[1.55rem]">
+                      {formatEuros(range.low)}
+                    </p>
+                  </div>
+
+                  <div className="px-2 text-center">
+                    <p className="font-mono text-[0.58rem] uppercase tracking-micro text-ink/55">
+                      Estimation haute
+                    </p>
+                    <p className="titre-etape mt-2 whitespace-nowrap text-[1.25rem] leading-none text-ink sm:text-[1.55rem]">
+                      {formatEuros(range.high)}
+                    </p>
+                  </div>
+                </div>
               </div>
             </motion.div>
           )}
